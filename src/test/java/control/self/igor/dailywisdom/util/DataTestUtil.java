@@ -11,6 +11,7 @@ import control.self.igor.dailywisdom.entity.AuthorDescription;
 import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.entity.Quote;
+import control.self.igor.dailywisdom.model.search.SearchByNameCriteria;
 
 public class DataTestUtil {
 
@@ -19,40 +20,43 @@ public class DataTestUtil {
 
     public static <SearchCriteria, Entity extends Identifiable> SearchCriteria createSearchCriteria(
 	    Class<SearchCriteria> searchCriteriaClazz, Class<Entity> entityClazz, List<Entity> availableEntities) {
-	if (searchCriteriaClazz.isAssignableFrom(String.class)) {
-	    return (SearchCriteria) createStringSearchCriteria(entityClazz, availableEntities);
+	if (searchCriteriaClazz.isAssignableFrom(SearchByNameCriteria.class)) {
+	    return (SearchCriteria) createNameSearchCriteria(entityClazz, availableEntities);
 	}
 	return null;
     }
 
-    public static <SearchCriteria, Entity extends Identifiable> String createStringSearchCriteria(
+    public static <SearchCriteria, Entity extends Identifiable> SearchByNameCriteria createNameSearchCriteria(
 	    Class<Entity> entityClazz, List<Entity> availableEntities) {
+	String name = null;
 	if (entityClazz.isAssignableFrom(Author.class)) {
-	    Author author = Author.class.cast(availableEntities.get(0));
-	    return author.getName().substring(0, 1);
+	    name = Author.class.cast(availableEntities.get(0)).getName();
 	}
 	if (entityClazz.isAssignableFrom(Category.class)) {
-	    Category category = Category.class.cast(availableEntities.get(0));
-	    return category.getName().substring(0, 1);
+	    name = Category.class.cast(availableEntities.get(0)).getName();
 	}
-	if (entityClazz.isAssignableFrom(Quote.class)) {
-	    Quote quote = Quote.class.cast(availableEntities.get(0));
-	    return quote.getContent().substring(0, 1);
+	if (name == null || name.isEmpty()) {
+	    return null;
 	}
-	return null;
+	return new SearchByNameCriteria(name.substring(0, name.length() / 2));
     }
 
     public static <Entity extends Identifiable> List<Entity> insertEntities(TestEntityManager entityManager,
 	    Class<Entity> clazz) {
+	List<Entity> entities = createEntities(clazz);
+	if (entities == null || entities.isEmpty()) {
+	    return null;
+	}
+	insertList(entityManager, entities);
+	return entities;
+    }
+
+    public static <Entity extends Identifiable> List<Entity> createEntities(Class<Entity> clazz) {
 	if (clazz.isAssignableFrom(Author.class)) {
-	    List<Author> authors = createAuthors();
-	    insertList(entityManager, authors);
-	    return (List<Entity>) authors;
+	    return (List<Entity>) createAuthors();
 	}
 	if (clazz.isAssignableFrom(Category.class)) {
-	    List<Category> categories = createCategories();
-	    insertList(entityManager, categories);
-	    return (List<Entity>) categories;
+	    return (List<Entity>) createCategories();
 	}
 	return null;
     }
@@ -136,18 +140,18 @@ public class DataTestUtil {
     }
 
     public static List<Category> createRandomCategories(List<Category> existingCategories) {
-	return existingCategories.subList(0, getRandomNumber(1, existingCategories.size()));
+	return existingCategories.subList(0, TestUtil.getRandomNumber(1, existingCategories.size()));
     }
 
     public static List<Category> createCategories() {
 	List<Category> categories = new ArrayList<>();
-	categories.add(new Category("Strength"));
+	categories.add(new Category("Wisdom"));
 	categories.add(new Category("Nature"));
 	categories.add(new Category("Love"));
 	categories.add(new Category("Evil"));
 	categories.add(new Category("Beauty"));
 	categories.add(new Category("Greatness"));
-	categories.add(new Category("Wisdom"));
+	categories.add(new Category("Strength"));
 	categories.add(new Category("Individualism"));
 	return categories;
     }
@@ -226,10 +230,6 @@ public class DataTestUtil {
 	quotes.add(new Quote("Mocked, even longer tha long quote", new Author("AuthorC", IMAGE_PLACE_HOLDER)));
 	category.setQuotes(quotes);
 	return category;
-    }
-
-    private static int getRandomNumber(int min, int max) {
-	return min + ((int) (Math.random() * max));
     }
 
 }

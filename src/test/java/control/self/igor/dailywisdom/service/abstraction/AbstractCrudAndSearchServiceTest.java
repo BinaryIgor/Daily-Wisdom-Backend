@@ -20,5 +20,6 @@ public class AbstractCrudAndSearchServiceTest<Entity extends Identifiable, Searc
 	List<Entity> searchResults = service.searchEntities(1, entities.size(),
 		searchCriteriaClazz.cast(searchCriteria));
 	assertTrue(searchResults != null && !searchResults.isEmpty());
+
     }
 }

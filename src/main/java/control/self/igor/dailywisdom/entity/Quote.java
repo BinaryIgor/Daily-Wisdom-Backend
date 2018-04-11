@@ -29,12 +29,12 @@ public class Quote implements Identifiable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonView(View.QuoteForCategory.class)
+    @JsonView(View.List.class)
     private long id;
 
     @Column(name = "content")
     @Size(min = 10, message = "is required")
-    @JsonView(View.QuoteForCategory.class)
+    @JsonView(View.List.class)
     private String content;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
@@ -45,7 +45,7 @@ public class Quote implements Identifiable {
     @OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 	    CascadeType.REFRESH })
     @JoinColumn(name = "author_id")
-    @JsonView(View.QuoteForCategory.class)
+    @JsonView(View.List.class)
     private Author author;
 
     public Quote() {

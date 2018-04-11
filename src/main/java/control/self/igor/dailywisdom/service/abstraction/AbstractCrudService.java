@@ -10,20 +10,29 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import control.self.igor.dailywisdom.entity.Identifiable;
 
-public abstract class AbstractCrudService<Entity extends Identifiable> {
+public abstract class AbstractCrudService<Entity extends Identifiable> implements CrudService<Entity> {
 
     protected static final int DEFAULT_PAGE_SIZE = 50;
+    private PagingAndSortingRepository<Entity, Long> repository;
 
-    public List<Entity> getEntities(PagingAndSortingRepository<Entity, Long> repository) {
+    public AbstractCrudService(PagingAndSortingRepository<Entity, Long> repository) {
+	this.repository = repository;
+    }
+
+    @Override
+    public List<Entity> getEntities() {
 	return (List<Entity>) repository.findAll();
     }
 
-    public List<Entity> getEntities(PagingAndSortingRepository<Entity, Long> repository, Integer page, Integer size) {
+    @Override
+    public List<Entity> getEntities(Integer page, Integer size) {
 	Sort sort = new Sort(Direction.ASC, "id");
-	if (page == null || page < 1) {
+	if ((page == null || page < 1) && (size == null || size < 1)) {
 	    return (List<Entity>) repository.findAll(sort);
 	}
-
+	if (page == null || page < 1) {
+	    page = 1;
+	}
 	if (size == null || size < 1) {
 	    size = DEFAULT_PAGE_SIZE;
 	}

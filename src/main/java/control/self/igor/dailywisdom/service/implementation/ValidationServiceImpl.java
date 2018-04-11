@@ -9,8 +9,9 @@ public class ValidationServiceImpl implements ValidationService {
 
     @Override
     public boolean validatePageRequest(Integer page, Integer size) {
-	return (page == null && size == null) || (page != null && page < 1 || size == null)
-		|| (size != null && size < 1);
+	return (page == null && size == null) || ((page != null && page > 0 && size != null && size > 0))
+		|| (page != null && page > 0 && size == null) || (page == null && size != null && size > 0);
+
     }
 
     @Override

@@ -28,13 +28,13 @@ public class Category implements QuoteOwner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonView(View.CategoryList.class)
+    @JsonView(View.List.class)
     private long id;
 
     @NotNull(message = "is required")
     @Size(min = 3, message = "is required")
     @Column(name = "name")
-    @JsonView(View.CategoryList.class)
+    @JsonView(View.List.class)
     private String name;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,

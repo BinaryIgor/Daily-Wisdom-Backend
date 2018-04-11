@@ -32,13 +32,13 @@ public class Author implements QuoteOwner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonView(View.QuoteForCategory.class)
+    @JsonView(View.List.class)
     private long id;
 
     @NotNull(message = "Author name must have at least 3 characters")
     @Size(min = 3, message = "Author name must have at least 3 characters")
     @Column(name = "name")
-    @JsonView(View.QuoteForCategory.class)
+    @JsonView(View.List.class)
     private String name;
 
     @NotNull

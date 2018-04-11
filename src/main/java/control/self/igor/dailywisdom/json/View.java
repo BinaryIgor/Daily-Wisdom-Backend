@@ -1,14 +1,10 @@
 package control.self.igor.dailywisdom.json;
 
 public class View {
-    public interface CategoryList {
+    public interface List {
     }
 
-    public interface CategoryDetails extends CategoryList {
-    }
-
-    public interface QuoteForCategory {
-
+    public interface Details extends List {
     }
 
 }

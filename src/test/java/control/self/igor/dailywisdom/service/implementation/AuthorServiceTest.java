@@ -24,14 +24,12 @@ import control.self.igor.dailywisdom.entity.Author;
 import control.self.igor.dailywisdom.entity.AuthorDescription;
 import control.self.igor.dailywisdom.service.abstraction.AbstractCrudAndSearchServiceTest;
 import control.self.igor.dailywisdom.service.abstraction.AuthorService;
-import control.self.igor.dailywisdom.service.abstraction.CrudAndSearchServiceTest;
 import control.self.igor.dailywisdom.util.DataTestUtil;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @SpringBootTest
-public class AuthorServiceTest extends AbstractCrudAndSearchServiceTest<Author, String>
-	implements CrudAndSearchServiceTest {
+public class AuthorServiceTest extends AbstractCrudAndSearchServiceTest<Author, String> {
 
     @TestConfiguration
     static class AuthorServiceImplTestConfiguration {
@@ -50,74 +48,62 @@ public class AuthorServiceTest extends AbstractCrudAndSearchServiceTest<Author, 
     }
 
     @Test
-    @Override
     public void properCreateTest() {
 	properCreateTest(service);
     }
 
     @Test(expected = ConstraintViolationException.class)
-    @Override
     public void improperCreateTest() {
 	improperCreateTest(service);
     }
 
     @Test
-    @Override
     public void getListTest() {
 	getListTest(service);
     }
 
     @Test
-    @Override
     public void properUpdateTest() {
 	properUpdateTest(service);
     }
 
     @Test(expected = ConstraintViolationException.class)
-    @Override
     public void improperUpdateTest() {
 	improperUpdateTest(service);
     }
 
     @Test(expected = NoSuchElementException.class)
-    @Override
     public void nonExistingGetTest() {
 	nonExistingGetTest(service);
 
     }
 
     @Test
-    @Override
     public void existingGetTest() {
 	existingGetTest(service);
     }
 
     @Test
-    @Override
     public void duplicatedCreateTest() {
 	duplicatedCreateTest(service);
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    @Override
     public void duplicatedUpdateTest() {
 	duplicatedUpdateTest(service);
     }
 
     @Test(expected = NoSuchElementException.class)
-    @Override
     public void properDeleteTest() {
 	properDeleteTest(service);
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
-    @Override
     public void improperDeleteTest() {
 	improperDeleteTest(service);
     }
 
     @Test
-    @Override
     public void searchTest() {
 	searchTest(service, String.class);
     }
