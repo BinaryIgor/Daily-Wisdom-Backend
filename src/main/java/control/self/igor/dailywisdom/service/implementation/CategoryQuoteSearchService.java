@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import control.self.igor.dailywisdom.entity.Category;
-import control.self.igor.dailywisdom.repository.abstraction.CategoryRepository;
 import control.self.igor.dailywisdom.repository.abstraction.EntityQuoteRepository;
 import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteSearchService;
 
@@ -15,8 +14,8 @@ import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteSear
 public class CategoryQuoteSearchService extends AbstractEntityQuoteSearchService<Category> {
 
     @Autowired
-    public CategoryQuoteSearchService(CategoryRepository crudRepository, EntityQuoteRepository entityQuoteRepository) {
-	super(Category.class, crudRepository, entityQuoteRepository);
+    public CategoryQuoteSearchService(EntityQuoteRepository entityQuoteRepository) {
+	super(Category.class, entityQuoteRepository);
     }
 
 }

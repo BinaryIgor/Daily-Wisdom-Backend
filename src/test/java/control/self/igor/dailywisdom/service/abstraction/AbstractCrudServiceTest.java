@@ -6,105 +6,126 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import javax.transaction.Transactional;
+import javax.validation.ConstraintViolationException;
+
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.util.DataTestUtil;
 
+@Transactional
 public abstract class AbstractCrudServiceTest<Entity extends Identifiable> {
 
     protected static final long NON_EXISTING_ENTITY_ID = 9777;
-    protected Class<Entity> entityClazz;
+    private Class<Entity> entityClazz;
 
     @Autowired
     protected TestEntityManager entityManager;
+
+    @Autowired
+    protected AbstractCrudService<Entity> crudService;
 
     public AbstractCrudServiceTest(Class<Entity> entityClazz) {
 	this.entityClazz = entityClazz;
     }
 
-    public void properCreateTest(CrudService<Entity> service) {
+    @Test
+    public void properCreateTest() {
 	Entity toInsertEntity = DataTestUtil.createEntity(entityClazz, true);
-	long id = service.createEntity(toInsertEntity);
+	long id = crudService.createEntity(toInsertEntity);
 	assertTrue(id > 0);
-	Entity insertedEntity = service.getEntity(id);
+	Entity insertedEntity = crudService.getEntity(id);
 	assertTrue(toInsertEntity.equals(insertedEntity));
     }
 
-    public void improperCreateTest(CrudService<Entity> service) {
-	service.createEntity(DataTestUtil.createEntity(entityClazz, false));
+    @Test(expected = ConstraintViolationException.class)
+    public void improperCreateTest() {
+	crudService.createEntity(DataTestUtil.createEntity(entityClazz, false));
     }
 
-    public void getListTest(CrudService<Entity> service) {
+    @Test
+    public void getListTest() {
 	DataTestUtil.insertEntities(entityManager, entityClazz);
-	List<Entity> entities = service.getEntities();
+	List<Entity> entities = crudService.getEntities();
 	assertTrue(entities != null && !entities.isEmpty());
 	int pageSize = entities.size() / 2;
-	List<Entity> entitiesFirstPage = service.getEntities(1, pageSize);
+	List<Entity> entitiesFirstPage = crudService.getEntities(1, pageSize);
 	assertTrue(entitiesFirstPage != null && entitiesFirstPage.size() == pageSize);
-	List<Entity> entitiesSecondPage = service.getEntities(2, pageSize);
+	List<Entity> entitiesSecondPage = crudService.getEntities(2, pageSize);
 	assertTrue(entitiesSecondPage != null && entitiesSecondPage.size() == pageSize);
 	for (Entity entity : entitiesFirstPage) {
 	    assertFalse(entitiesSecondPage.contains(entity));
 	}
     }
 
-    public void properUpdateTest(CrudService<Entity> service) {
-	updateTest(service, true);
+    @Test
+    public void properUpdateTest() {
+	updateTest(true);
     }
 
-    public void improperUpdateTest(CrudService<Entity> service) {
-	updateTest(service, false);
+    @Test(expected = ConstraintViolationException.class)
+    public void improperUpdateTest() {
+	updateTest(false);
     }
 
-    private void updateTest(CrudService<Entity> service, boolean proper) {
+    private void updateTest(boolean proper) {
 	Entity entity = DataTestUtil.insertEntity(entityManager, entityClazz);
 	DataTestUtil.changeEntity(entity, entityClazz, proper);
 	if (proper) {
-	    assertTrue(service.updateEntity(entity));
+	    assertTrue(crudService.updateEntity(entity));
 	} else {
-	    service.updateEntity(entity);
+	    crudService.updateEntity(entity);
 	}
     }
 
-    public void nonExistingGetTest(CrudService<Entity> service) {
-	Entity entity = service.getEntity(NON_EXISTING_ENTITY_ID);
-	assertNull(entity);
+    @Test(expected = NoSuchElementException.class)
+    public void nonExistingGetTest() {
+	assertNull(crudService.getEntity(NON_EXISTING_ENTITY_ID));
     }
 
-    public void existingGetTest(CrudService<Entity> service) {
+    @Test
+    public void existingGetTest() {
 	Entity createdEntity = DataTestUtil.insertEntity(entityManager, entityClazz);
-	Entity loadedEntity = service.getEntity(createdEntity.getId());
+	Entity loadedEntity = crudService.getEntity(createdEntity.getId());
 	assertEquals(createdEntity, loadedEntity);
     }
 
-    public void duplicatedCreateTest(CrudService<Entity> service) {
+    @Test
+    public void duplicatedCreateTest() {
 	Entity entity = DataTestUtil.createEntity(entityClazz, true);
-	long firstId = service.createEntity(entity);
-	long secondId = service.createEntity(entity);
+	long firstId = crudService.createEntity(entity);
+	long secondId = crudService.createEntity(entity);
 	assertEquals(firstId, secondId);
     }
 
-    public void duplicatedUpdateTest(CrudService<Entity> service) {
+    @Test(expected = DataIntegrityViolationException.class)
+    public void duplicatedUpdateTest() {
 	Entity firstEntity = DataTestUtil.createEntity(entityClazz, true);
-	service.createEntity(firstEntity);
+	crudService.createEntity(firstEntity);
 	Entity secondEntity = DataTestUtil.createEntity(entityClazz, true);
 	DataTestUtil.changeEntity(secondEntity, entityClazz, true);
-	service.createEntity(secondEntity);
+	crudService.createEntity(secondEntity);
 	DataTestUtil.likenEntities(entityClazz, firstEntity, secondEntity);
-	service.updateEntity(secondEntity);
+	crudService.updateEntity(secondEntity);
     }
 
-    public void properDeleteTest(CrudService<Entity> service) {
+    @Test(expected = NoSuchElementException.class)
+    public void properDeleteTest() {
 	Entity entity = DataTestUtil.insertEntity(entityManager, entityClazz);
-	service.deleteEntity(entity.getId());
-	entity = service.getEntity(entity.getId());
+	crudService.deleteEntity(entity.getId());
+	entity = crudService.getEntity(entity.getId());
     }
 
-    public void improperDeleteTest(CrudService<Entity> service) {
-	service.deleteEntity(NON_EXISTING_ENTITY_ID);
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void improperDeleteTest() {
+	crudService.deleteEntity(NON_EXISTING_ENTITY_ID);
     }
 
 }

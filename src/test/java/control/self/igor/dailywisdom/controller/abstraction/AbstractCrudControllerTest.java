@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.model.api.EntityCounter;
-import control.self.igor.dailywisdom.service.abstraction.CrudService;
+import control.self.igor.dailywisdom.service.abstraction.AbstractCrudService;
 import control.self.igor.dailywisdom.service.abstraction.JsonService;
 import control.self.igor.dailywisdom.util.DataTestUtil;
 import control.self.igor.dailywisdom.util.TestUtil;
@@ -37,7 +37,7 @@ public class AbstractCrudControllerTest<Entity extends Identifiable> {
     protected Class<Entity> entityClazz;
 
     @Autowired
-    private CrudService<Entity> crudService;
+    private AbstractCrudService<Entity> crudService;
 
     @Autowired
     protected MockMvc mockMvc;

@@ -23,17 +23,17 @@ import control.self.igor.dailywisdom.exception.NotFoundException;
 import control.self.igor.dailywisdom.json.View;
 import control.self.igor.dailywisdom.model.api.EntityCounter;
 import control.self.igor.dailywisdom.model.api.Response;
-import control.self.igor.dailywisdom.service.abstraction.CrudService;
+import control.self.igor.dailywisdom.service.abstraction.AbstractCrudService;
 import control.self.igor.dailywisdom.service.abstraction.ValidationService;
 
 public abstract class AbstractCrudController<Entity extends Identifiable> {
 
     public static final Logger LOGGER = Logger.getLogger(AbstractCrudController.class);
 
-    public CrudService<Entity> crudService;
+    public AbstractCrudService<Entity> crudService;
     protected ValidationService validationService;
 
-    public AbstractCrudController(CrudService<Entity> crudService, ValidationService validationService) {
+    public AbstractCrudController(AbstractCrudService<Entity> crudService, ValidationService validationService) {
 	this.crudService = crudService;
 	this.validationService = validationService;
     }

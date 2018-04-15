@@ -1,7 +1,6 @@
 package control.self.igor.dailywisdom.service.abstraction;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -10,21 +9,19 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import control.self.igor.dailywisdom.entity.Identifiable;
 
-public abstract class AbstractCrudService<Entity extends Identifiable> implements CrudService<Entity> {
+public abstract class AbstractCrudService<Entity extends Identifiable> {
 
     protected static final int DEFAULT_PAGE_SIZE = 50;
-    private PagingAndSortingRepository<Entity, Long> repository;
+    protected PagingAndSortingRepository<Entity, Long> repository;
 
     public AbstractCrudService(PagingAndSortingRepository<Entity, Long> repository) {
 	this.repository = repository;
     }
 
-    @Override
     public List<Entity> getEntities() {
 	return (List<Entity>) repository.findAll();
     }
 
-    @Override
     public List<Entity> getEntities(Integer page, Integer size) {
 	Sort sort = new Sort(Direction.ASC, "id");
 	if ((page == null || page < 1) && (size == null || size < 1)) {
@@ -39,31 +36,30 @@ public abstract class AbstractCrudService<Entity extends Identifiable> implement
 	return repository.findAll(PageRequest.of(page - 1, size, sort)).getContent();
     }
 
-    public long countEntities(PagingAndSortingRepository<Entity, Long> repository) {
+    public long countEntities() {
 	return repository.count();
     }
 
-    public Entity getEntity(PagingAndSortingRepository<Entity, Long> repository, long id) {
-	Optional<Entity> entity = repository.findById(id);
-	return entity.get();
+    public Entity getEntity(long id) {
+	return repository.findById(id).get();
     }
 
-    public long createEntity(PagingAndSortingRepository<Entity, Long> repository, Entity entity) {
+    public long createEntity(Entity entity) {
 	return repository.save(entity).getId();
     }
 
-    public boolean updateEntity(PagingAndSortingRepository<Entity, Long> repository, Entity entity) {
+    public boolean updateEntity(Entity entity) {
 	if (!repository.existsById(entity.getId())) {
 	    return false;
 	}
-	return createEntity(repository, entity) > 0;
+	return createEntity(entity) > 0;
     }
 
-    public void deleteEntity(PagingAndSortingRepository<Entity, Long> repository, long id) {
+    public void deleteEntity(long id) {
 	repository.deleteById(id);
     }
 
-    public boolean exists(PagingAndSortingRepository<Entity, Long> repository, long id) {
+    public boolean exists(long id) {
 	return repository.existsById(id);
     }
 

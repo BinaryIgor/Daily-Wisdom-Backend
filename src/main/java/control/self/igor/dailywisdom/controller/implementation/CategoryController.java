@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import control.self.igor.dailywisdom.controller.abstraction.AbstractCrudAndSearchController;
 import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.model.search.SearchByNameCriteria;
-import control.self.igor.dailywisdom.service.abstraction.CrudService;
+import control.self.igor.dailywisdom.service.abstraction.AbstractCrudService;
 import control.self.igor.dailywisdom.service.abstraction.SearchService;
 import control.self.igor.dailywisdom.service.abstraction.ValidationService;
 
@@ -21,8 +21,8 @@ public class CategoryController extends AbstractCrudAndSearchController<Category
     public static final Logger LOGGER = Logger.getLogger(CategoryController.class);
 
     @Autowired
-    public CategoryController(CrudService<Category> crudService,
-	    SearchService<SearchByNameCriteria, Category> searchService, ValidationService validationService) {
+    public CategoryController(AbstractCrudService<Category> crudService,
+	    SearchService<Category, SearchByNameCriteria> searchService, ValidationService validationService) {
 	super(crudService, searchService, validationService);
     }
 

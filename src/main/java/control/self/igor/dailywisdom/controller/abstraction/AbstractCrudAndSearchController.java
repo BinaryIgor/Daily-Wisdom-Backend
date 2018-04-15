@@ -13,17 +13,17 @@ import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.exception.BadRequestException;
 import control.self.igor.dailywisdom.json.View;
 import control.self.igor.dailywisdom.model.api.EntityCounter;
-import control.self.igor.dailywisdom.service.abstraction.CrudService;
+import control.self.igor.dailywisdom.service.abstraction.AbstractCrudService;
 import control.self.igor.dailywisdom.service.abstraction.SearchService;
 import control.self.igor.dailywisdom.service.abstraction.ValidationService;
 
 public abstract class AbstractCrudAndSearchController<Entity extends Identifiable, SearchCriteria>
 	extends AbstractCrudController<Entity> {
 
-    private SearchService<SearchCriteria, Entity> searchService;
+    private SearchService<Entity, SearchCriteria> searchService;
 
-    public AbstractCrudAndSearchController(CrudService<Entity> crudService,
-	    SearchService<SearchCriteria, Entity> searchService, ValidationService validationService) {
+    public AbstractCrudAndSearchController(AbstractCrudService<Entity> crudService,
+	    SearchService<Entity, SearchCriteria> searchService, ValidationService validationService) {
 	super(crudService, validationService);
 	this.searchService = searchService;
 

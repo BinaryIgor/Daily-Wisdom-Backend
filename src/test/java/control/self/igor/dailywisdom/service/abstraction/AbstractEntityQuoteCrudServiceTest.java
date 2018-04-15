@@ -1,15 +1,17 @@
 package control.self.igor.dailywisdom.service.abstraction;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.validation.ConstraintViolationException;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Transactional;
 
 import control.self.igor.dailywisdom.entity.Quote;
@@ -23,10 +25,10 @@ public abstract class AbstractEntityQuoteCrudServiceTest<Entity extends QuoteOwn
     private Class<Entity> entityClazz;
 
     @Autowired
-    private TestEntityManager entityManager;
+    protected TestEntityManager entityManager;
 
     @Autowired
-    private EntityQuoteCrudService<Entity> crudService;
+    protected AbstractEntityQuoteCrudService<Entity> crudService;
 
     public AbstractEntityQuoteCrudServiceTest(Class<Entity> entityClazz) {
 	this.entityClazz = entityClazz;
@@ -48,9 +50,28 @@ public abstract class AbstractEntityQuoteCrudServiceTest<Entity extends QuoteOwn
 	}
     }
 
+    @Test
+    public void getExistingEntityQuoteTest() {
+	Entity entity = DataTestUtil.insertEntityWithDependency(entityManager, entityClazz);
+	Quote quote = crudService.getQuote(entity.getId(), entity.getQuotes().get(0).getId());
+	assertNotNull(quote);
+    }
+
     @Test(expected = NoSuchElementException.class)
-    public void nonExistingEntityListTest() {
-	crudService.getQuotes(NON_EXISTING_ENTITY_ID);
+    public void getExistingEntityNonExistingQuoteTest() {
+	Entity entity = DataTestUtil.insertEntityWithDependency(entityManager, entityClazz);
+	crudService.getQuote(entity.getId(), NON_EXISTING_ENTITY_ID);
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void getNonExistingEntityQuoteTest() {
+	crudService.getQuote(NON_EXISTING_ENTITY_ID, NON_EXISTING_ENTITY_ID);
+    }
+
+    @Test
+    public void getNonExistingEntityListTest() {
+	List<Quote> quotes = crudService.getQuotes(NON_EXISTING_ENTITY_ID);
+	assertTrue(quotes == null || quotes.isEmpty());
     }
 
     @Test(expected = NoSuchElementException.class)
@@ -64,14 +85,14 @@ public abstract class AbstractEntityQuoteCrudServiceTest<Entity extends QuoteOwn
 	assertTrue(updateEntityQuoteTest(true));
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test(expected = ConstraintViolationException.class)
     public void updateExistingEntityImproperQuoteTest() {
 	assertTrue(updateEntityQuoteTest(false));
     }
 
     private boolean updateEntityQuoteTest(boolean proper) {
-	Entity entity = DataTestUtil.insertEntityWithDependency(entityManager, entityClazz);
-	Quote quote = entity.getQuotes().get(0);
+	Entity entity = DataTestUtil.insertEntity(entityManager, entityClazz);
+	Quote quote = DataTestUtil.insertQuote(entityManager, entityClazz, entity);
 	DataTestUtil.changeEntity(quote, Quote.class, proper);
 	return crudService.updateQuote(entity.getId(), quote);
     }
@@ -88,10 +109,10 @@ public abstract class AbstractEntityQuoteCrudServiceTest<Entity extends QuoteOwn
 	crudService.deleteQuote(NON_EXISTING_ENTITY_ID, NON_EXISTING_ENTITY_ID);
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void updateNonExistingEntityQuoteTest() {
 	Quote quote = DataTestUtil.createEntity(Quote.class, true);
-	crudService.updateQuote(NON_EXISTING_ENTITY_ID, quote);
+	assertFalse(crudService.updateQuote(NON_EXISTING_ENTITY_ID, quote));
     }
 
     @Test
@@ -100,7 +121,7 @@ public abstract class AbstractEntityQuoteCrudServiceTest<Entity extends QuoteOwn
 	assertTrue(crudService.createQuote(entity.getId(), DataTestUtil.createEntity(Quote.class, true)) > 0);
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test(expected = ConstraintViolationException.class)
     public void createExistingEntityImproperQuoteTest() {
 	Entity entity = DataTestUtil.insertEntity(entityManager, entityClazz);
 	crudService.createQuote(entity.getId(), new Quote());

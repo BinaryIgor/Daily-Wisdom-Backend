@@ -39,34 +39,4 @@ public class CategoryControllerTest extends AbstractCrudAndSearchControllerTest<
 
     }
 
-    // @Test
-    // public void getListTest() throws Exception {
-    // super.getListTest(crudService);
-    // }
-    //
-    // @Test
-    // public void getExistingEntityTest() throws Exception {
-    // getExistingEntityTest(crudService);
-    // }
-    //
-    // @Test
-    // public void getNonExistingEntityTest() throws Exception {
-    // getNonExistingEntityTest(crudService);
-    // }
-    //
-    // @Test
-    // public void countListTest() throws Exception {
-    // countListTest(crudService);
-    // }
-    //
-    // @Test
-    // public void createProperEntityTest() throws Exception {
-    // createProperEntityTest(crudService);
-    // }
-    //
-    // @Test
-    // public void createImproperEntityTest() throws Exception {
-    // createImproperEntityTest(crudService);
-    // }
-
 }

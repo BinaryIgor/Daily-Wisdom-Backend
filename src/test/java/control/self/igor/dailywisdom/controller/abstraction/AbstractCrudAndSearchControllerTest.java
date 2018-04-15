@@ -25,7 +25,7 @@ public abstract class AbstractCrudAndSearchControllerTest<Entity extends Identif
     private Class<SearchCriteria> searchCriteriaClazz;
     private String searchUrl;
     @Autowired
-    private SearchService<SearchCriteria, Entity> searchService;
+    private SearchService<Entity, SearchCriteria> searchService;
 
     public AbstractCrudAndSearchControllerTest(String baseUrl, Class<Entity> entityClazz,
 	    Class<SearchCriteria> searchCriteriaClazz) {
@@ -37,7 +37,8 @@ public abstract class AbstractCrudAndSearchControllerTest<Entity extends Identif
     @Test
     public void searchProperParamsTest() throws Exception {
 	List<Entity> entities = DataTestUtil.createEntities(entityClazz);
-	SearchCriteria searchCriteria = DataTestUtil.createSearchCriteria(searchCriteriaClazz, entityClazz, entities);
+	SearchCriteria searchCriteria = DataTestUtil.createSearchCriteria(searchCriteriaClazz, entityClazz, entities,
+		false);
 	when(searchService.searchEntities(null, null, searchCriteria)).thenReturn(entities);
 	String url = baseUrl + "/search";
 	mockMvc.perform(
@@ -68,7 +69,8 @@ public abstract class AbstractCrudAndSearchControllerTest<Entity extends Identif
     @Test
     public void searchImproperParamsTest() throws Exception {
 	List<Entity> entities = DataTestUtil.createEntities(entityClazz);
-	SearchCriteria searchCriteria = DataTestUtil.createSearchCriteria(searchCriteriaClazz, entityClazz, entities);
+	SearchCriteria searchCriteria = DataTestUtil.createSearchCriteria(searchCriteriaClazz, entityClazz, entities,
+		false);
 	String url = TestUtil.createPageUrl(searchUrl, -1, -2);
 	mockMvc.perform(
 		post(url).contentType(MediaType.APPLICATION_JSON).content(jsonService.serialize(searchCriteria)))

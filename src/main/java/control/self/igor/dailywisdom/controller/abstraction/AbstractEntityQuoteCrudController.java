@@ -1,9 +1,12 @@
 package control.self.igor.dailywisdom.controller.abstraction;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.validation.Valid;
 
+import org.jboss.logging.Logger;
+import org.jboss.logging.Logger.Level;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,7 @@ import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.entity.QuoteOwner;
 import control.self.igor.dailywisdom.exception.BadRequestException;
 import control.self.igor.dailywisdom.exception.InternalErrorException;
+import control.self.igor.dailywisdom.exception.NotFoundException;
 import control.self.igor.dailywisdom.exception.WrongDataException;
 import control.self.igor.dailywisdom.json.View;
 import control.self.igor.dailywisdom.model.api.EntityCounter;
@@ -26,6 +30,7 @@ import control.self.igor.dailywisdom.service.abstraction.ValidationService;
 
 public abstract class AbstractEntityQuoteCrudController<Entity extends QuoteOwner> {
 
+    private static final Logger LOGGER = Logger.getLogger(AbstractEntityQuoteCrudController.class.getSimpleName());
     protected AbstractEntityQuoteCrudService<Entity> crudService;
     protected ValidationService validationService;
 
@@ -55,10 +60,15 @@ public abstract class AbstractEntityQuoteCrudController<Entity extends QuoteOwne
     @GetMapping("/{id}/{quoteId}")
     @JsonView(View.List.class)
     public Quote Quote(@PathVariable("id") long id, @PathVariable("quoteId") long quoteId) {
-	if (validationService.validateIds(id, quoteId)) {
-	    return crudService.getQuote(id, quoteId);
+	if (!validationService.validateIds(id, quoteId)) {
+	    throw new BadRequestException();
 	}
-	throw new BadRequestException();
+	try {
+	    return crudService.getQuote(id, quoteId);
+	} catch (NoSuchElementException exception) {
+	    LOGGER.log(Level.WARN, exception.toString(), exception);
+	    throw new NotFoundException();
+	}
     }
 
     @PostMapping("/{id}")

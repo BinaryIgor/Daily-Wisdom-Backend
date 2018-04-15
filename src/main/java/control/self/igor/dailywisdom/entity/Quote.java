@@ -33,6 +33,7 @@ public class Quote implements Identifiable {
     private long id;
 
     @Column(name = "content")
+    @NotNull
     @Size(min = 10, message = "is required")
     @JsonView(View.List.class)
     private String content;

@@ -25,9 +25,11 @@ import control.self.igor.dailywisdom.json.View;
 @Entity
 @Table(name = "author")
 @JsonIgnoreProperties(value = { "picture", "quotes", "authorDescription" })
-public class Author implements QuoteOwner {
+public class Author implements QuoteOwner, Searchable {
 
     private static final Logger LOGGER = Logger.getLogger(Author.class.getSimpleName());
+    public static final int AUTHOR_IMAGE_WIDTH = 128;
+    public static final int AUTHOR_IMAGE_HEIGHT = 128;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

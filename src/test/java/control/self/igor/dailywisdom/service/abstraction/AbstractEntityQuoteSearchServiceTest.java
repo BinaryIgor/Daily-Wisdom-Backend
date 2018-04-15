@@ -4,7 +4,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import javax.transaction.Transactional;
 
@@ -27,7 +26,7 @@ public abstract class AbstractEntityQuoteSearchServiceTest<Entity extends QuoteO
     private TestEntityManager entityManager;
 
     @Autowired
-    private EntityQuoteSearchService searchService;
+    private AbstractEntityQuoteSearchService<Entity> searchService;
 
     public AbstractEntityQuoteSearchServiceTest(Class<Entity> entityClazz) {
 	this.entityClazz = entityClazz;
@@ -46,10 +45,12 @@ public abstract class AbstractEntityQuoteSearchServiceTest<Entity extends QuoteO
 	assertFalse(searchResults != null && !searchResults.isEmpty());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void searchNonExistingEntityQuotesTest() {
 	int pageSize = 2;
-	searchService.searchQuotes(NON_EXISTING_ENTITY_ID, 1, pageSize, NO_RESULT_SEARCH_CRITERIA);
+	List<Quote> searchResult = searchService.searchQuotes(NON_EXISTING_ENTITY_ID, 1, pageSize,
+		NO_RESULT_SEARCH_CRITERIA);
+	assertTrue(searchResult == null || searchResult.isEmpty());
     }
 
 }

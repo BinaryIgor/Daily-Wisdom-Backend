@@ -23,7 +23,7 @@ import control.self.igor.dailywisdom.json.View;
 
 @Entity
 @Table(name = "category")
-public class Category implements QuoteOwner {
+public class Category implements QuoteOwner, Searchable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
