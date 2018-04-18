@@ -8,18 +8,18 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import control.self.igor.dailywisdom.entity.Quote;
+import control.self.igor.dailywisdom.entity.Identifiable;
 
-public abstract class AbstractQuoteSearchService {
+public abstract class AbstractSearchService<Entity extends Identifiable> {
 
     private static final int DEFAULT_PAGE_SIZE = 50;
-    private JpaSpecificationExecutor<Quote> executor;
+    private JpaSpecificationExecutor<Entity> executor;
 
-    public AbstractQuoteSearchService(JpaSpecificationExecutor<Quote> executor) {
+    public AbstractSearchService(JpaSpecificationExecutor<Entity> executor) {
 	this.executor = executor;
     }
 
-    public List<Quote> searchQuotes(Integer page, Integer size, Specification<Quote> specification) {
+    public List<Entity> searchEntities(Integer page, Integer size, Specification<Entity> specification) {
 	Sort sort = new Sort(Direction.ASC, "id");
 	if ((page == null || page < 1) && (size == null || size < 1)) {
 	    return executor.findAll(specification);
@@ -29,7 +29,7 @@ public abstract class AbstractQuoteSearchService {
 	return executor.findAll(specification, PageRequest.of(page - 1, size, sort)).getContent();
     }
 
-    public long countFoundQuotes(Specification<Quote> specification) {
+    public long countFoundEntities(Specification<Entity> specification) {
 	return executor.count(specification);
     }
 

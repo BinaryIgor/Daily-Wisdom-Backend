@@ -8,7 +8,10 @@ import java.util.List;
 import control.self.igor.dailywisdom.entity.Author;
 import control.self.igor.dailywisdom.entity.AuthorDescription;
 import control.self.igor.dailywisdom.entity.Category;
+import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.entity.Quote;
+import control.self.igor.dailywisdom.model.search.QuoteSearchCriteria;
+import control.self.igor.dailywisdom.model.search.SearchByNameCriteria;
 
 public class MockUtil {
 
@@ -25,6 +28,37 @@ public class MockUtil {
 	}
     }
 
+    public static <Entity extends Identifiable> SearchByNameCriteria createSearchCriteria(Class<Entity> entityClazz,
+	    List<Entity> availableEntities, boolean emptyResult) {
+	String name = null;
+	if (entityClazz.isAssignableFrom(Author.class)) {
+	    name = Author.class.cast(availableEntities.get(0)).getName();
+	}
+	if (entityClazz.isAssignableFrom(Category.class)) {
+	    name = Category.class.cast(availableEntities.get(0)).getName();
+	}
+	if (name == null || name.isEmpty()) {
+	    return null;
+	}
+	if (emptyResult) {
+	    return new SearchByNameCriteria(name + name);
+	}
+	return new SearchByNameCriteria(name.substring(0, name.length() / 2));
+    }
+
+    public static QuoteSearchCriteria createSearchCritieria(List<Quote> availableQuotes, boolean emptyResult) {
+	if (emptyResult) {
+	    return new QuoteSearchCriteria("abcdef", null, null);
+	}
+	List<Long> categoriesIds = new ArrayList<>();
+	categoriesIds.add(availableQuotes.get(0).getCategories().get(0).getId());
+	categoriesIds.add(availableQuotes.get(1).getCategories().get(0).getId());
+	List<Long> authorsIds = new ArrayList<>();
+	authorsIds.add(availableQuotes.get(0).getAuthor().getId());
+	authorsIds.add(availableQuotes.get(1).getAuthor().getId());
+	return new QuoteSearchCriteria(null, categoriesIds, authorsIds);
+    }
+
     public static List<Quote> createQuotes(Author author, List<Category> existingCategories) {
 	List<Quote> quotes = new ArrayList<>();
 	quotes.add(new Quote("Achievement of your happiness is the only moral purpose of your life,"
@@ -37,6 +71,8 @@ public class MockUtil {
 		"Do not let your fire go out, spark by irreplaceable spark in the hopeless swamps of the not-quite, the not-yet, and the not-at-all."
 			+ " Do not let the hero in your soul perish in lonely frustration for the life you deserved and have never been able to reach. "
 			+ "The world you desire can be won. It exists.. it is real.. it is possible.. it's yours",
+		createRandomCategories(existingCategories), author));
+	quotes.add(new Quote("The question isn't who is going to let me; it's who is going to stop me.",
 		createRandomCategories(existingCategories), author));
 	author.setQuotes(quotes);
 	return quotes;

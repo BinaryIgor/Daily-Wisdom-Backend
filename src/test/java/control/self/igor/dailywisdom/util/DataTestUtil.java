@@ -10,6 +10,7 @@ import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.entity.QuoteOwner;
+import control.self.igor.dailywisdom.model.search.QuoteSearchCriteria;
 import control.self.igor.dailywisdom.model.search.SearchByNameCriteria;
 
 public class DataTestUtil {
@@ -18,7 +19,11 @@ public class DataTestUtil {
 	    Class<SearchCriteria> searchCriteriaClazz, Class<Entity> entityClazz, List<Entity> availableEntities,
 	    boolean emptyResult) {
 	if (searchCriteriaClazz.isAssignableFrom(SearchByNameCriteria.class)) {
-	    return (SearchCriteria) createNameSearchCriteria(entityClazz, availableEntities, emptyResult);
+	    return (SearchCriteria) MockUtil.createSearchCriteria(entityClazz, availableEntities, emptyResult);
+	}
+	if (searchCriteriaClazz.isAssignableFrom(QuoteSearchCriteria.class)
+		&& entityClazz.isAssignableFrom(Quote.class)) {
+	    return (SearchCriteria) MockUtil.createSearchCritieria((List<Quote>) availableEntities, emptyResult);
 	}
 	return null;
     }
@@ -28,25 +33,10 @@ public class DataTestUtil {
 	if (searchCriteriaClazz.isAssignableFrom(SearchByNameCriteria.class)) {
 	    return (SearchCriteria) new SearchByNameCriteria("");
 	}
+	if (searchCriteriaClazz.isAssignableFrom(QuoteSearchCriteria.class)) {
+	    return (SearchCriteria) new QuoteSearchCriteria(null, null, null);
+	}
 	return null;
-    }
-
-    public static <SearchCriteria, Entity extends Identifiable> SearchByNameCriteria createNameSearchCriteria(
-	    Class<Entity> entityClazz, List<Entity> availableEntities, boolean emptyResult) {
-	String name = null;
-	if (entityClazz.isAssignableFrom(Author.class)) {
-	    name = Author.class.cast(availableEntities.get(0)).getName();
-	}
-	if (entityClazz.isAssignableFrom(Category.class)) {
-	    name = Category.class.cast(availableEntities.get(0)).getName();
-	}
-	if (name == null || name.isEmpty()) {
-	    return null;
-	}
-	if (emptyResult) {
-	    return new SearchByNameCriteria(name + name);
-	}
-	return new SearchByNameCriteria(name.substring(0, name.length() / 2));
     }
 
     public static <Entity extends Identifiable> List<Entity> insertEntities(TestEntityManager entityManager,

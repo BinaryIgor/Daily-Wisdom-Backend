@@ -11,11 +11,12 @@ import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.entity.QuoteOwner;
 import control.self.igor.dailywisdom.model.search.QuoteSearchCriteria;
 
-public class QuoteSpecification {
+public class SpecificationFactory {
 
-    public static Specification<Quote> searchByContent(String content) {
+    public static <Entity extends Identifiable> Specification<Entity> searchByTextColumn(String columnName,
+	    String columnValue) {
 	return (root, query, criteriaBuilder) -> {
-	    return criteriaBuilder.like(root.get("content"), "%" + content + "%");
+	    return criteriaBuilder.like(criteriaBuilder.lower(root.get(columnName)), "%" + columnValue + "%");
 	};
     }
 
@@ -82,8 +83,8 @@ public class QuoteSpecification {
 	}
 	String content = searchCriteria.getContent();
 	if (content != null && !content.isEmpty()) {
-	    searchSpecification = (searchSpecification == null) ? searchByContent(content)
-		    : searchSpecification.and(searchByContent(content));
+	    searchSpecification = (searchSpecification == null) ? searchByTextColumn("content", content)
+		    : searchSpecification.and(searchByTextColumn("content", content));
 	}
 	return searchSpecification;
     }
@@ -94,7 +95,7 @@ public class QuoteSpecification {
 	if (specification == null) {
 	    return null;
 	}
-	return specification.and(searchByContent(searchCriteria));
+	return specification.and(searchByTextColumn("content", searchCriteria));
     }
 
     public static <Entity extends QuoteOwner> Specification<Quote> entityQuote(long id, Class<Entity> clazz,

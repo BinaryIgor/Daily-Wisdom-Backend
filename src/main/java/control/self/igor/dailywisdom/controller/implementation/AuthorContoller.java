@@ -1,7 +1,6 @@
 package control.self.igor.dailywisdom.controller.implementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,7 +21,6 @@ import control.self.igor.dailywisdom.service.abstraction.ImageService;
 import control.self.igor.dailywisdom.service.abstraction.SearchService;
 import control.self.igor.dailywisdom.service.abstraction.ValidationService;
 
-@Controller
 @RestController
 @RequestMapping("/author")
 public class AuthorContoller extends AbstractCrudAndSearchController<Author, SearchByNameCriteria> {
@@ -30,8 +28,9 @@ public class AuthorContoller extends AbstractCrudAndSearchController<Author, Sea
     private ImageService imageService;
 
     @Autowired
-    public AuthorContoller(AbstractAuthorCrudService crudService, SearchService<Author, SearchByNameCriteria> searchService,
-	    ValidationService validationService, ImageService imageService) {
+    public AuthorContoller(AbstractAuthorCrudService crudService,
+	    SearchService<Author, SearchByNameCriteria> searchService, ValidationService validationService,
+	    ImageService imageService) {
 	super(crudService, searchService, validationService);
 	this.imageService = imageService;
     }

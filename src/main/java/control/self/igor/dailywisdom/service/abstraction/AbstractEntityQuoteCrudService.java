@@ -12,7 +12,7 @@ import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.entity.QuoteOwner;
 import control.self.igor.dailywisdom.repository.abstraction.EntityQuoteRepository;
-import control.self.igor.dailywisdom.repository.abstraction.QuoteSpecification;
+import control.self.igor.dailywisdom.repository.abstraction.SpecificationFactory;
 
 public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
 
@@ -29,13 +29,13 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
     }
 
     public List<Quote> getQuotes(long id) {
-	return entityQuoteRepository.findAll(QuoteSpecification.entityQuotes(id, entityClazz));
+	return entityQuoteRepository.findAll(SpecificationFactory.entityQuotes(id, entityClazz));
     }
 
     public List<Quote> getQuotes(long id, Integer page, Integer size) {
 	Sort sort = new Sort(Direction.ASC, "id");
 	if ((page == null || page < 1) && (size == null || size < 1)) {
-	    return entityQuoteRepository.findAll(QuoteSpecification.entityQuotes(id, entityClazz));
+	    return entityQuoteRepository.findAll(SpecificationFactory.entityQuotes(id, entityClazz));
 	}
 	if (page == null || page < 1) {
 	    page = 1;
@@ -44,12 +44,12 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
 	    size = DEFAULT_PAGE_SIZE;
 	}
 	return entityQuoteRepository
-		.findAll(QuoteSpecification.entityQuotes(id, entityClazz), PageRequest.of(page - 1, size, sort))
+		.findAll(SpecificationFactory.entityQuotes(id, entityClazz), PageRequest.of(page - 1, size, sort))
 		.getContent();
     }
 
     public Quote getQuote(long id, long quoteId) {
-	return entityQuoteRepository.findOne(QuoteSpecification.entityQuote(id, entityClazz, quoteId)).get();
+	return entityQuoteRepository.findOne(SpecificationFactory.entityQuote(id, entityClazz, quoteId)).get();
     }
 
     public long createQuote(long id, Quote quote) {
@@ -85,11 +85,11 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
     }
 
     public boolean quoteExists(long id, long quoteId) {
-	return entityQuoteRepository.count(QuoteSpecification.entityQuote(id, entityClazz, quoteId)) > 0;
+	return entityQuoteRepository.count(SpecificationFactory.entityQuote(id, entityClazz, quoteId)) > 0;
     }
 
     public long countQuotes(long id) {
-	return entityQuoteRepository.count(QuoteSpecification.entityQuotes(id, entityClazz));
+	return entityQuoteRepository.count(SpecificationFactory.entityQuotes(id, entityClazz));
     }
 
 }

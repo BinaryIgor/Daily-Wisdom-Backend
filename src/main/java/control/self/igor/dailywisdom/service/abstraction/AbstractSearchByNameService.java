@@ -1,55 +1,40 @@
 package control.self.igor.dailywisdom.service.abstraction;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import control.self.igor.dailywisdom.entity.Searchable;
 import control.self.igor.dailywisdom.model.search.SearchByNameCriteria;
-import control.self.igor.dailywisdom.repository.abstraction.SearchingByNameRepository;
+import control.self.igor.dailywisdom.repository.abstraction.SpecificationFactory;
 
-public abstract class AbstractSearchByNameService<Entity extends Searchable>
+public abstract class AbstractSearchByNameService<Entity extends Searchable> extends AbstractSearchService<Entity>
 	implements SearchService<Entity, SearchByNameCriteria> {
 
-    private static final int DEFAULT_PAGE_SIZE = 50;
-    public static final Logger LOGGER = Logger.getLogger(AbstractSearchByNameService.class.getSimpleName());
-    private SearchingByNameRepository<Entity> repository;
-
     @Autowired
-    public AbstractSearchByNameService(SearchingByNameRepository<Entity> repository) {
-	this.repository = repository;
+    public AbstractSearchByNameService(JpaSpecificationExecutor<Entity> executor) {
+	super(executor);
     }
 
     @Override
     public List<Entity> searchEntities(Integer page, Integer size, SearchByNameCriteria searchCriteria) {
-	Sort sort = new Sort(Direction.ASC, "id");
 	String name = searchCriteria.getName();
-	if (name != null && !name.isEmpty()) {
-	    name = name.toLowerCase().trim();
+	if (name == null) {
+	    return new ArrayList<>();
 	}
-	LOGGER.info("querying with : " + searchCriteria);
-	if ((page == null || page < 1) && (size == null || size < 1)) {
-	    return repository.searchEntities(name);
-	}
-	if (page == null || page < 1) {
-	    page = 1;
-	}
-	if (size == null || size < 1) {
-	    size = DEFAULT_PAGE_SIZE;
-	}
-	return repository.searchEntities(name, PageRequest.of(page - 1, size, sort)).getContent();
+	name = name.toLowerCase().trim();
+	return searchEntities(page, size, SpecificationFactory.searchByTextColumn("name", name));
     }
 
     @Override
     public long countFoundEntities(SearchByNameCriteria searchCriteria) {
 	String name = searchCriteria.getName();
-	if (name != null && !name.isEmpty()) {
-	    name = name.toLowerCase().trim();
+	if (name == null) {
+	    return 0;
 	}
-	return repository.countFoundEntities(name);
+	name = name.toLowerCase().trim();
+	return countFoundEntities(SpecificationFactory.searchByTextColumn("name", name));
     }
 }
