@@ -14,6 +14,7 @@ import control.self.igor.dailywisdom.entity.Author;
 import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.entity.QuoteOwner;
+import control.self.igor.dailywisdom.repository.abstraction.CategoryRepository;
 import control.self.igor.dailywisdom.repository.abstraction.EntityQuoteRepository;
 import control.self.igor.dailywisdom.repository.abstraction.SpecificationFactory;
 
@@ -22,14 +23,19 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
     private static final int DEFAULT_PAGE_SIZE = 50;
     private static final Logger LOGGER = Logger.getLogger(AbstractEntityQuoteCrudService.class.getSimpleName());
     private Class<Entity> entityClazz;
-    private CrudRepository<Entity, Long> entityRepository;
+    private CrudRepository<Author, Long> authorRepository;
+    private CategoryRepository categoryRepository;
     private EntityQuoteRepository entityQuoteRepository;
+    private ComparatorService comparatorService;
 
-    public AbstractEntityQuoteCrudService(Class<Entity> entityClazz, CrudRepository<Entity, Long> entityRepository,
-	    EntityQuoteRepository entityQuoteRepository) {
+    public AbstractEntityQuoteCrudService(Class<Entity> entityClazz, CrudRepository<Author, Long> authorRepository,
+	    CategoryRepository categoryRepository, EntityQuoteRepository entityQuoteRepository,
+	    ComparatorService comparatorService) {
 	this.entityClazz = entityClazz;
-	this.entityRepository = entityRepository;
+	this.authorRepository = authorRepository;
+	this.categoryRepository = categoryRepository;
 	this.entityQuoteRepository = entityQuoteRepository;
+	this.comparatorService = comparatorService;
     }
 
     public List<Quote> getQuotes(long id) {
@@ -58,18 +64,7 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
     }
 
     public long createQuote(long id, Quote quote) {
-	try {
-	    Entity entity = entityRepository.findById(id).get();
-	    if (entityClazz.isAssignableFrom(Category.class)) {
-		quote.addCategory((Category) entity);
-
-	    } else if (entityClazz.isAssignableFrom(Author.class)) {
-		quote.setAuthor((Author) entity);
-	    } else {
-		return 0;
-	    }
-	} catch (NoSuchElementException exception) {
-	    LOGGER.log(Level.WARNING, exception.toString(), exception);
+	if (!validateEntityQuote(id, quote)) {
 	    return 0;
 	}
 	System.out.println("Saving quote with author = " + quote.getAuthor());
@@ -78,6 +73,11 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
 
     public boolean updateQuote(long id, Quote quote) {
 	if (!quoteExists(id, quote.getId())) {
+	    LOGGER.info("Quote does not exist!(" + id + ", " + quote.getId());
+	    return false;
+	}
+	if (!validateEntityQuote(id, quote)) {
+	    LOGGER.info("Quote can not be validated!");
 	    return false;
 	}
 	entityQuoteRepository.save(quote);
@@ -92,6 +92,16 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
 	    } catch (NoSuchElementException exception) {
 		LOGGER.log(Level.WARNING, exception.toString(), exception);
 	    }
+	} else {
+	    boolean entityExists = false;
+	    if (entityClazz.isAssignableFrom(Author.class)) {
+		entityExists = authorRepository.existsById(id);
+	    } else {
+		entityExists = categoryRepository.existsById(id);
+	    }
+	    if (!entityExists) {
+		throw new NoSuchElementException();
+	    }
 	}
 	return true;
     }
@@ -102,6 +112,50 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
 
     public long countQuotes(long id) {
 	return entityQuoteRepository.count(SpecificationFactory.entityQuotes(id, entityClazz));
+    }
+
+    private boolean validateEntityQuote(long id, Quote quote) {
+	if (entityClazz.isAssignableFrom(Author.class)) {
+	    return validateAuthorQuote(id, quote);
+	} else {
+	    return validateCategoryQuote(id, quote);
+	}
+    }
+
+    private boolean validateAuthorQuote(long id, Quote quote) {
+	try {
+	    Author author = authorRepository.findById(id).get();
+	    quote.setAuthor(author);
+	    List<Category> categories = quote.getCategories();
+	    if (categories == null || categories.isEmpty()) {
+		return true;
+	    }
+	    List<Category> existingCategories = categoryRepository.findByIdIn(Category.getCategoriesIds(categories));
+	    if (!comparatorService.compareLists(categories, existingCategories)) {
+		return false;
+	    }
+	} catch (NoSuchElementException exception) {
+	    LOGGER.log(Level.WARNING, exception.toString(), exception);
+	    return false;
+	}
+	return true;
+    }
+
+    private boolean validateCategoryQuote(long id, Quote quote) {
+	try {
+	    Category category = categoryRepository.findById(id).get();
+	    quote.addCategory(category);
+	    Author author = quote.getAuthor();
+	    if (author == null) {
+		return false;
+	    }
+	    author = authorRepository.findById(author.getId()).get();
+	    quote.setAuthor(author);
+	} catch (NoSuchElementException exception) {
+	    LOGGER.log(Level.WARNING, exception.toString(), exception);
+	    return false;
+	}
+	return true;
     }
 
 }

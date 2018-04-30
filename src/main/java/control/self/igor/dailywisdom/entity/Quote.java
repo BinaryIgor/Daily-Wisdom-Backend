@@ -100,7 +100,7 @@ public class Quote implements Identifiable {
     public void addCategory(@NotNull Category category) {
 	if (categories == null) {
 	    categories = new ArrayList<>();
-	} else if (hasCategory(category.getId())) {
+	} else if (categories.contains(category)) {
 	    return;
 	}
 	categories.add(category);

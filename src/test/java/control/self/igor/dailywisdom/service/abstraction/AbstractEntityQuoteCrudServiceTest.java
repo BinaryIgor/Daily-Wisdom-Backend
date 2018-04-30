@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.transaction.annotation.Transactional;
 
+import control.self.igor.dailywisdom.entity.Author;
+import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.entity.QuoteOwner;
 import control.self.igor.dailywisdom.util.DataTestUtil;
@@ -74,7 +76,6 @@ public abstract class AbstractEntityQuoteCrudServiceTest<Entity extends QuoteOwn
 	assertTrue(quotes == null || quotes.isEmpty());
     }
 
-    @Test(expected = NoSuchElementException.class)
     public void createNonExistingEntityQuoteTest() {
 	Quote quote = DataTestUtil.createEntity(Quote.class, true);
 	assertFalse(crudService.createQuote(NON_EXISTING_ENTITY_ID, quote) > 0);
@@ -92,7 +93,14 @@ public abstract class AbstractEntityQuoteCrudServiceTest<Entity extends QuoteOwn
 
     private boolean updateEntityQuoteTest(boolean proper) {
 	Entity entity = DataTestUtil.insertEntity(entityManager, entityClazz);
-	Quote quote = DataTestUtil.insertQuote(entityManager, entityClazz, entity);
+	Quote quote = DataTestUtil.createEntity(Quote.class, true);
+	setQuoteDependencies(quote);
+	if (entityClazz.isAssignableFrom(Author.class)) {
+	    quote.setAuthor((Author) entity);
+	} else {
+	    quote.addCategory((Category) entity);
+	}
+	quote = entityManager.persist(quote);
 	DataTestUtil.changeEntity(quote, Quote.class, proper);
 	return crudService.updateQuote(entity.getId(), quote);
     }
@@ -117,14 +125,28 @@ public abstract class AbstractEntityQuoteCrudServiceTest<Entity extends QuoteOwn
 
     @Test
     public void createExistingEntityProperQuoteTest() {
+	Quote quote = DataTestUtil.createEntity(Quote.class, true);
+	setQuoteDependencies(quote);
 	Entity entity = DataTestUtil.insertEntity(entityManager, entityClazz);
-	assertTrue(crudService.createQuote(entity.getId(), DataTestUtil.createEntity(Quote.class, true)) > 0);
+	assertTrue(crudService.createQuote(entity.getId(), quote) > 0);
+    }
+
+    private void setQuoteDependencies(Quote quote) {
+	if (entityClazz.isAssignableFrom(Author.class)) {
+	    List<Category> categories = DataTestUtil.insertEntities(entityManager, Category.class);
+	    quote.setCategories(categories);
+	} else {
+	    Author author = DataTestUtil.insertEntity(entityManager, Author.class);
+	    quote.setAuthor(author);
+	}
     }
 
     @Test(expected = ConstraintViolationException.class)
     public void createExistingEntityImproperQuoteTest() {
 	Entity entity = DataTestUtil.insertEntity(entityManager, entityClazz);
-	crudService.createQuote(entity.getId(), new Quote());
+	Quote quote = new Quote();
+	setQuoteDependencies(quote);
+	crudService.createQuote(entity.getId(), quote);
     }
 
 }

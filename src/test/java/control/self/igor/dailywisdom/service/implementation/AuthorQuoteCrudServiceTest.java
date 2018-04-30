@@ -9,9 +9,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import control.self.igor.dailywisdom.entity.Author;
 import control.self.igor.dailywisdom.repository.abstraction.AuthorRepository;
+import control.self.igor.dailywisdom.repository.abstraction.CategoryRepository;
 import control.self.igor.dailywisdom.repository.abstraction.EntityQuoteRepository;
 import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteCrudService;
 import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteCrudServiceTest;
+import control.self.igor.dailywisdom.service.abstraction.ComparatorService;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -24,11 +26,20 @@ public class AuthorQuoteCrudServiceTest extends AbstractEntityQuoteCrudServiceTe
 	private AuthorRepository authorRepository;
 
 	@Autowired
+	private CategoryRepository categoryRepository;
+
+	@Autowired
 	private EntityQuoteRepository entityQuoteRepository;
 
 	@Bean
+	public ComparatorService comparatorService() {
+	    return new ComparatorServiceImpl();
+	}
+
+	@Bean
 	public AbstractEntityQuoteCrudService<Author> crudService() {
-	    return new AuthorQuoteCrudService(authorRepository, entityQuoteRepository);
+	    return new AuthorQuoteCrudService(authorRepository, categoryRepository, entityQuoteRepository,
+		    comparatorService());
 	}
 
     }

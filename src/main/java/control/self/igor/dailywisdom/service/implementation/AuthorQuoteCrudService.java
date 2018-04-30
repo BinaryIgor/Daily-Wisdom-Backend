@@ -7,16 +7,19 @@ import org.springframework.stereotype.Service;
 
 import control.self.igor.dailywisdom.entity.Author;
 import control.self.igor.dailywisdom.repository.abstraction.AuthorRepository;
+import control.self.igor.dailywisdom.repository.abstraction.CategoryRepository;
 import control.self.igor.dailywisdom.repository.abstraction.EntityQuoteRepository;
 import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteCrudService;
+import control.self.igor.dailywisdom.service.abstraction.ComparatorService;
 
 @Service
 @Transactional
 public class AuthorQuoteCrudService extends AbstractEntityQuoteCrudService<Author> {
 
     @Autowired
-    public AuthorQuoteCrudService(AuthorRepository authorRepository, EntityQuoteRepository entityQuoteRepository) {
-	super(Author.class, authorRepository, entityQuoteRepository);
+    public AuthorQuoteCrudService(AuthorRepository authorRepository, CategoryRepository categoryRepository,
+	    EntityQuoteRepository entityQuoteRepository, ComparatorService comparatorService) {
+	super(Author.class, authorRepository, categoryRepository, entityQuoteRepository, comparatorService);
 
     }
 

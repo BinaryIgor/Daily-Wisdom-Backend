@@ -23,7 +23,7 @@ import control.self.igor.dailywisdom.json.View;
 
 @Entity
 @Table(name = "category")
-public class Category implements QuoteOwner, Searchable {
+public class Category implements QuoteOwner, Searchable, Comparable<Category> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -120,6 +120,21 @@ public class Category implements QuoteOwner, Searchable {
 	    ids.add(category.getId());
 	}
 	return ids;
+    }
+
+    @Override
+    public int compareTo(Category category) {
+	if (category == null) {
+	    return 1;
+	}
+	long idsDifference = id - category.getId();
+	if (idsDifference > 0) {
+	    return 1;
+	} else if (idsDifference < 0) {
+	    return -1;
+	} else {
+	    return 0;
+	}
     }
 
 }

@@ -118,6 +118,12 @@ public class MockUtil {
 	return new Quote("Mocked, very long quote", createAuthor());
     }
 
+    public static Quote crateQuoteWithDependencies(Author author, List<Category> categories) {
+	Quote quote = new Quote("Super, ultra, very long quote", author);
+	quote.setCategories(categories);
+	return quote;
+    }
+
     public static Category createCategory() {
 	return new Category("Mock");
     }
@@ -149,5 +155,14 @@ public class MockUtil {
 	quotes.add(new Quote("Mocked, even longer tha long quote", author));
 	category.setQuotes(quotes);
 	return category;
+    }
+
+    public static List<TestComparable> createComparableList() {
+	List<TestComparable> testsComparables = new ArrayList<>();
+	testsComparables.add(new TestComparable(1));
+	testsComparables.add(new TestComparable(2));
+	testsComparables.add(new TestComparable(4));
+	testsComparables.add(new TestComparable(5));
+	return testsComparables;
     }
 }
