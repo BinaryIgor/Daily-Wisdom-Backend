@@ -1,6 +1,9 @@
 package control.self.igor.dailywisdom.service.abstraction;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,6 +20,7 @@ import control.self.igor.dailywisdom.repository.abstraction.SpecificationFactory
 public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
 
     private static final int DEFAULT_PAGE_SIZE = 50;
+    private static final Logger LOGGER = Logger.getLogger(AbstractEntityQuoteCrudService.class.getSimpleName());
     private Class<Entity> entityClazz;
     private CrudRepository<Entity, Long> entityRepository;
     private EntityQuoteRepository entityQuoteRepository;
@@ -33,6 +37,7 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
     }
 
     public List<Quote> getQuotes(long id, Integer page, Integer size) {
+	System.out.println("Why we are searching?");
 	Sort sort = new Sort(Direction.ASC, "id");
 	if ((page == null || page < 1) && (size == null || size < 1)) {
 	    return entityQuoteRepository.findAll(SpecificationFactory.entityQuotes(id, entityClazz));
@@ -53,17 +58,21 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
     }
 
     public long createQuote(long id, Quote quote) {
-	if (entityClazz.isAssignableFrom(Category.class) && !quote.hasCategory(id)) {
-	    quote.addCategory((Category) entityRepository.findById(id).get());
+	try {
+	    Entity entity = entityRepository.findById(id).get();
+	    if (entityClazz.isAssignableFrom(Category.class)) {
+		quote.addCategory((Category) entity);
 
-	} else if (entityClazz.isAssignableFrom(Author.class)) {
-	    Author author = (Author) entityRepository.findById(id).get();
-	    if (!author.equals(quote.getAuthor())) {
-		quote.setAuthor(author);
+	    } else if (entityClazz.isAssignableFrom(Author.class)) {
+		quote.setAuthor((Author) entity);
+	    } else {
+		return 0;
 	    }
-	} else {
+	} catch (NoSuchElementException exception) {
+	    LOGGER.log(Level.WARNING, exception.toString(), exception);
 	    return 0;
 	}
+	System.out.println("Saving quote with author = " + quote.getAuthor());
 	return entityQuoteRepository.save(quote).getId();
     }
 
@@ -76,11 +85,14 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
     }
 
     public boolean deleteQuote(long id, long quoteId) {
-	Quote quote = entityQuoteRepository.findById(quoteId).get();
-	if (quote == null || !quoteExists(id, quote.getId())) {
-	    return false;
+	if (quoteExists(id, quoteId)) {
+	    try {
+		Quote quote = entityQuoteRepository.findById(quoteId).get();
+		entityQuoteRepository.delete(quote);
+	    } catch (NoSuchElementException exception) {
+		LOGGER.log(Level.WARNING, exception.toString(), exception);
+	    }
 	}
-	entityQuoteRepository.delete(quote);
 	return true;
     }
 

@@ -29,18 +29,18 @@ public class Quote implements Identifiable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonView(View.List.class)
+    @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private long id;
 
     @Column(name = "content")
     @NotNull
     @Size(min = 10, message = "is required")
-    @JsonView(View.List.class)
+    @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private String content;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
-	    CascadeType.REFRESH })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     @JoinTable(name = "category_quote", joinColumns = @JoinColumn(name = "quote_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @JsonView(View.AuthorDetails.class)
     private List<Category> categories;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
@@ -100,6 +100,8 @@ public class Quote implements Identifiable {
     public void addCategory(@NotNull Category category) {
 	if (categories == null) {
 	    categories = new ArrayList<>();
+	} else if (hasCategory(category.getId())) {
+	    return;
 	}
 	categories.add(category);
     }

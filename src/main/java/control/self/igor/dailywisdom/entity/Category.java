@@ -28,17 +28,16 @@ public class Category implements QuoteOwner, Searchable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonView(View.List.class)
+    @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private long id;
 
     @NotNull(message = "is required")
     @Size(min = 3, message = "is required")
     @Column(name = "name")
-    @JsonView(View.List.class)
+    @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
-	    CascadeType.REFRESH })
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     @JoinTable(name = "category_quote", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "quote_id"))
     private List<Quote> quotes;
 

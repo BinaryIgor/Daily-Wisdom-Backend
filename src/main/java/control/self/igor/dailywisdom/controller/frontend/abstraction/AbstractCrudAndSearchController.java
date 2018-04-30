@@ -1,8 +1,7 @@
-package control.self.igor.dailywisdom.controller.abstraction;
+package control.self.igor.dailywisdom.controller.frontend.abstraction;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,7 +38,7 @@ public abstract class AbstractCrudAndSearchController<Entity extends Identifiabl
 	throw new BadRequestException();
     }
 
-    @GetMapping("/search/count")
+    @PostMapping("/search/count")
     public EntityCounter countFoundEntities(@RequestBody SearchCriteria searchCriteria) {
 	return new EntityCounter(searchService.countFoundEntities(searchCriteria));
     }

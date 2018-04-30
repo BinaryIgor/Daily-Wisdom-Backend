@@ -9,18 +9,24 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
-public class User {
+public class User implements Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
+    @NotNull(message = "User name must have at least 3 characters")
+    @Size(min = 3, message = "User name must have at least 3 characters")
     @Column(name = "name")
     private String name;
 
+    @NotNull(message = "User password must have at least 3 characters")
+    @Size(min = 3, message = "User password must have at least 3 characters")
     @Column(name = "password")
     private String password;
 
@@ -29,6 +35,17 @@ public class User {
     @JoinColumn(name = "user_role_id")
     private UserRole userRole;
 
+    public User() {
+
+    }
+
+    public User(String name, String password, UserRole userRole) {
+	this.name = name;
+	this.password = password;
+	this.userRole = userRole;
+    }
+
+    @Override
     public long getId() {
 	return id;
     }
@@ -59,6 +76,11 @@ public class User {
 
     public void setUserRole(UserRole userRole) {
 	this.userRole = userRole;
+    }
+
+    @Override
+    public String toString() {
+	return "User [id=" + id + ", name=" + name + ", password=" + password + ", userRole=" + userRole + "]";
     }
 
 }

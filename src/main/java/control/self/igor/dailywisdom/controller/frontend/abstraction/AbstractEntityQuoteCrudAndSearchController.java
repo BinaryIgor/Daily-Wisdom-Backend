@@ -1,4 +1,4 @@
-package control.self.igor.dailywisdom.controller.abstraction;
+package control.self.igor.dailywisdom.controller.frontend.abstraction;
 
 import java.util.List;
 

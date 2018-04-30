@@ -7,4 +7,8 @@ public class View {
     public interface Details extends List {
     }
 
+    public interface AuthorDetails {
+
+    }
+
 }

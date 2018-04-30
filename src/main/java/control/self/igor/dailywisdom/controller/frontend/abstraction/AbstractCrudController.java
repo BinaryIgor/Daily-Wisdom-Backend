@@ -1,4 +1,4 @@
-package control.self.igor.dailywisdom.controller.abstraction;
+package control.self.igor.dailywisdom.controller.frontend.abstraction;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -7,6 +7,8 @@ import javax.validation.Valid;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Logger.Level;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +44,7 @@ public abstract class AbstractCrudController<Entity extends Identifiable> {
     @GetMapping("/list")
     public List<Entity> getEntities(@RequestParam(value = "page", required = false) Integer page,
 	    @RequestParam(value = "size", required = false) Integer size) {
+	System.out.println("Will we search?");
 	if (validationService.validatePageRequest(page, size)) {
 	    return crudService.getEntities(page, size);
 	}
@@ -65,7 +68,12 @@ public abstract class AbstractCrudController<Entity extends Identifiable> {
 
     @PostMapping("")
     public Response createEntity(@Valid @RequestBody Entity entity) {
-	crudService.createEntity(entity);
+	try {
+	    crudService.createEntity(entity);
+	} catch (DataIntegrityViolationException exception) {
+	    LOGGER.log(Level.WARN, exception.toString(), exception);
+	    throw new BadRequestException(Response.EXISTS);
+	}
 	return new Response(Response.OK);
     }
 
@@ -84,7 +92,7 @@ public abstract class AbstractCrudController<Entity extends Identifiable> {
 	}
 	try {
 	    crudService.deleteEntity(id);
-	} catch (NoSuchElementException exception) {
+	} catch (EmptyResultDataAccessException exception) {
 	    LOGGER.log(Level.WARN, exception.toString(), exception);
 	    throw new NotFoundException();
 	}

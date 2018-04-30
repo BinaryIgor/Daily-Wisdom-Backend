@@ -12,6 +12,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import control.self.igor.dailywisdom.json.View;
 
 @Entity
 @Table(name = "author_description")
@@ -30,6 +33,7 @@ public class AuthorDescription implements Identifiable {
     @NotBlank(message = "is required")
     @Size(min = 10, message = "description has to have at least 10 characters!")
     @Column(name = "description")
+    @JsonView(View.AuthorDetails.class)
     private String description;
 
     public AuthorDescription(Author author, String description) {

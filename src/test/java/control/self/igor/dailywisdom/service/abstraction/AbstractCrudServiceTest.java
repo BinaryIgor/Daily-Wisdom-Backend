@@ -15,7 +15,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.util.DataTestUtil;
@@ -123,9 +122,12 @@ public abstract class AbstractCrudServiceTest<Entity extends Identifiable> {
 	entity = crudService.getEntity(entity.getId());
     }
 
-    @Test(expected = EmptyResultDataAccessException.class)
-    public void improperDeleteTest() {
+    @Test
+    public void deleteIdempotencyTest() {
 	crudService.deleteEntity(NON_EXISTING_ENTITY_ID);
+	Entity entity = DataTestUtil.insertEntity(entityManager, entityClazz);
+	crudService.deleteEntity(entity.getId());
+	crudService.deleteEntity(entity.getId());
     }
 
 }

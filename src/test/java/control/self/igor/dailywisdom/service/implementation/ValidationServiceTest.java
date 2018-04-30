@@ -74,7 +74,7 @@ public class ValidationServiceTest {
 	size = -44;
 	assertFalse(service.validatePageRequest(page, size));
 	page = 1;
-	size = -1;
+	size = -10;
 	assertFalse(service.validatePageRequest(page, size));
     }
 

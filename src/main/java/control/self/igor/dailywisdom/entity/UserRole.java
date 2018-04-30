@@ -7,7 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class UserRole {
+public class UserRole implements Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +17,30 @@ public class UserRole {
     @Column(name = "role")
     private String role;
 
+    public enum Role {
+
+	guest("guest"), admin("admin");
+
+	private String translation;
+
+	Role(String translation) {
+	    this.translation = translation;
+	}
+
+	public String getTranslation() {
+	    return translation;
+	}
+    }
+
+    public UserRole() {
+
+    }
+
+    public UserRole(String role) {
+	this.role = role;
+    }
+
+    @Override
     public long getId() {
 	return id;
     }

@@ -54,3 +54,23 @@ CREATE TABLE category_quote (
   FOREIGN KEY (quote_id) 
   REFERENCES quote (id) ON DELETE CASCADE
 );
+
+DROP TABLE IF EXISTS user_role;
+CREATE TABLE user_role (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  role varchar(50) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY role (role)
+);
+
+DROP TABLE IF EXISTS user;
+CREATE TABLE user (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  name varchar(50) NOT NULL,
+  password varchar(50) NOT NULL,
+  enabled tinyint(4) NOT NULL DEFAULT 1,
+  user_role_id int(11) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY name (name),
+  FOREIGN KEY (user_role_id) REFERENCES user_role (id)
+);

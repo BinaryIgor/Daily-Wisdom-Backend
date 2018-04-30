@@ -17,14 +17,12 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import control.self.igor.dailywisdom.json.View;
 
 @Entity
 @Table(name = "author")
-@JsonIgnoreProperties(value = { "picture", "quotes", "authorDescription" })
 public class Author implements QuoteOwner, Searchable {
 
     private static final Logger LOGGER = Logger.getLogger(Author.class.getSimpleName());
@@ -34,13 +32,13 @@ public class Author implements QuoteOwner, Searchable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonView(View.List.class)
+    @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private long id;
 
     @NotNull(message = "Author name must have at least 3 characters")
     @Size(min = 3, message = "Author name must have at least 3 characters")
     @Column(name = "name")
-    @JsonView(View.List.class)
+    @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private String name;
 
     @NotNull
@@ -48,9 +46,11 @@ public class Author implements QuoteOwner, Searchable {
     private byte[] image;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "author", cascade = CascadeType.ALL)
+    @JsonView(View.AuthorDetails.class)
     private AuthorDescription authorDescription;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "author", cascade = CascadeType.ALL)
+    @JsonView(View.AuthorDetails.class)
     private List<Quote> quotes;
 
     public Author() {
@@ -137,7 +137,7 @@ public class Author implements QuoteOwner, Searchable {
 
     @Override
     public String toString() {
-	return String.valueOf(id);
+	return "Author [id=" + id + ", name=" + name + "]";
     }
 
     public static List<Long> getAuthorsIds(@NotNull List<Author> authors) {

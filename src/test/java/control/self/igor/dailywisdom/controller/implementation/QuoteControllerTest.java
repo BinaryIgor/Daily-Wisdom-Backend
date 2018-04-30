@@ -2,21 +2,24 @@ package control.self.igor.dailywisdom.controller.implementation;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import control.self.igor.dailywisdom.controller.abstraction.AbstractCrudAndSearchControllerTest;
+import control.self.igor.dailywisdom.controller.frontend.implementation.QuoteController;
 import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.model.search.QuoteSearchCriteria;
+import control.self.igor.dailywisdom.service.abstraction.JsonService;
+import control.self.igor.dailywisdom.service.abstraction.ValidationService;
+import control.self.igor.dailywisdom.service.implementation.JsonServiceImpl;
 import control.self.igor.dailywisdom.service.implementation.QuoteCrudService;
 import control.self.igor.dailywisdom.service.implementation.QuoteSearchService;
+import control.self.igor.dailywisdom.service.implementation.ValidationServiceImpl;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(QuoteController.class)
 public class QuoteControllerTest extends AbstractCrudAndSearchControllerTest<Quote, QuoteSearchCriteria> {
 
     @TestConfiguration
@@ -30,6 +33,16 @@ public class QuoteControllerTest extends AbstractCrudAndSearchControllerTest<Quo
 	@Bean
 	public QuoteSearchService searchService() {
 	    return Mockito.mock(QuoteSearchService.class);
+	}
+
+	@Bean
+	public ValidationService validationService() {
+	    return new ValidationServiceImpl();
+	}
+
+	@Bean
+	public JsonService jsonService() {
+	    return new JsonServiceImpl();
 	}
 
     }

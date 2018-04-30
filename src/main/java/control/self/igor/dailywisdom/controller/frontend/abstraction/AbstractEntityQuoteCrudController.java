@@ -1,18 +1,19 @@
-package control.self.igor.dailywisdom.controller.abstraction;
+package control.self.igor.dailywisdom.controller.frontend.abstraction;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.validation.Valid;
 
-import org.jboss.logging.Logger;
-import org.jboss.logging.Logger.Level;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -42,14 +43,16 @@ public abstract class AbstractEntityQuoteCrudController<Entity extends QuoteOwne
 
     @JsonView(View.List.class)
     @GetMapping("/{id}/list")
-    public List<Quote> getQuotes(@PathVariable("id") long id, Integer page, Integer size) {
+    public List<Quote> getQuotes(@PathVariable("id") long id,
+	    @RequestParam(value = "page", required = false) Integer page,
+	    @RequestParam(value = "page", required = false) Integer size) {
 	if (id > 0 && validationService.validatePageRequest(page, size)) {
 	    return crudService.getQuotes(id, page, size);
 	}
 	throw new BadRequestException();
     }
 
-    @GetMapping("/list/count")
+    @GetMapping("/{id}/list/count")
     public EntityCounter countQuotes(@PathVariable("id") long id) {
 	if (id < 1) {
 	    throw new BadRequestException();
@@ -59,16 +62,15 @@ public abstract class AbstractEntityQuoteCrudController<Entity extends QuoteOwne
 
     @GetMapping("/{id}/{quoteId}")
     @JsonView(View.List.class)
-    public Quote Quote(@PathVariable("id") long id, @PathVariable("quoteId") long quoteId) {
+    public Quote getQuote(@PathVariable("id") long id, @PathVariable("quoteId") long quoteId) {
 	if (!validationService.validateIds(id, quoteId)) {
 	    throw new BadRequestException();
 	}
-	try {
-	    return crudService.getQuote(id, quoteId);
-	} catch (NoSuchElementException exception) {
-	    LOGGER.log(Level.WARN, exception.toString(), exception);
+	Quote quote = crudService.getQuote(id, quoteId);
+	if (quote == null) {
 	    throw new NotFoundException();
 	}
+	return quote;
     }
 
     @PostMapping("/{id}")
@@ -90,16 +92,22 @@ public abstract class AbstractEntityQuoteCrudController<Entity extends QuoteOwne
 	}
 	boolean updated = crudService.updateQuote(id, quote);
 	if (!updated) {
-	    throw new WrongDataException();
+	    throw new NotFoundException();
 	}
 	return new Response(Response.OK);
     }
 
-    @DeleteMapping("/{id}/quoteId}")
+    @DeleteMapping("/{id}/{quoteId}")
     public Response deleteQuote(@PathVariable("id") long id, @PathVariable("quoteId") long quoteId) {
-	boolean wrongData = !validationService.validateIds(id, quoteId) || (crudService.deleteQuote(id, quoteId));
+	boolean wrongData;
+	try {
+	    wrongData = !validationService.validateIds(id, quoteId) || !crudService.deleteQuote(id, quoteId);
+	} catch (NoSuchElementException exception) {
+	    LOGGER.log(Level.WARNING, exception.toString(), exception);
+	    wrongData = true;
+	}
 	if (wrongData) {
-	    throw new WrongDataException();
+	    throw new NotFoundException();
 	}
 	return new Response(Response.OK);
     }

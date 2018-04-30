@@ -5,7 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,13 +26,18 @@ public class DailyWisdomBackendApplication {
     // TODO
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-	return new WebMvcConfigurerAdapter() {
+	return new WebMvcConfigurer() {
 	    @Override
 	    public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**");
+		registry.addMapping("/**")
+			.allowedHeaders("Content-Type", "X-Requested-With", "accept", "Origin",
+				"Access-Control-Request-Method", "Access-Control-Request-Headers")
+			.exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
+			.allowedMethods("GET", "POST", "PUT", "DELETE");
 	    }
 	};
     }
+
     // @Bean
     // public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
     // return args -> {

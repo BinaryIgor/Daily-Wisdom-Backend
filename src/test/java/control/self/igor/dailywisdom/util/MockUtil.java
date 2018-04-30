@@ -10,6 +10,8 @@ import control.self.igor.dailywisdom.entity.AuthorDescription;
 import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.entity.Quote;
+import control.self.igor.dailywisdom.entity.User;
+import control.self.igor.dailywisdom.entity.UserRole;
 import control.self.igor.dailywisdom.model.search.QuoteSearchCriteria;
 import control.self.igor.dailywisdom.model.search.SearchByNameCriteria;
 
@@ -120,8 +122,16 @@ public class MockUtil {
 	return new Category("Mock");
     }
 
+    public static User createUser(String role) {
+	return new User("abc", "abc", new UserRole(role));
+    }
+
+    public static User createDifferentUser(User user) {
+	return new User(user.getName() + "ab", user.getPassword() + "ab", user.getUserRole());
+    }
+
     public static Category createCategoryWithQuotes() {
-	Category category = createCategory();
+	Category category = new Category("Mock");
 	List<Quote> quotes = new ArrayList<>();
 	byte[] image = createImage();
 	quotes.add(new Quote("Mocked, very long quote", new Author("AuthorA", image)));

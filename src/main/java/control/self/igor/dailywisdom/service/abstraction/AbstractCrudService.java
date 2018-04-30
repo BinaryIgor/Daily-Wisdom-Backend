@@ -1,6 +1,9 @@
 package control.self.igor.dailywisdom.service.abstraction;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -12,6 +15,7 @@ import control.self.igor.dailywisdom.entity.Identifiable;
 public abstract class AbstractCrudService<Entity extends Identifiable> {
 
     protected static final int DEFAULT_PAGE_SIZE = 50;
+    protected static final Logger LOGGER = Logger.getLogger(AbstractCrudService.class.getSimpleName());
     protected PagingAndSortingRepository<Entity, Long> repository;
 
     public AbstractCrudService(PagingAndSortingRepository<Entity, Long> repository) {
@@ -24,6 +28,7 @@ public abstract class AbstractCrudService<Entity extends Identifiable> {
 
     public List<Entity> getEntities(Integer page, Integer size) {
 	Sort sort = new Sort(Direction.ASC, "id");
+	System.out.println("Why we are searching?");
 	if ((page == null || page < 1) && (size == null || size < 1)) {
 	    return (List<Entity>) repository.findAll(sort);
 	}
@@ -56,7 +61,12 @@ public abstract class AbstractCrudService<Entity extends Identifiable> {
     }
 
     public void deleteEntity(long id) {
-	repository.deleteById(id);
+	try {
+	    Entity entity = repository.findById(id).get();
+	    repository.delete(entity);
+	} catch (NoSuchElementException exception) {
+	    LOGGER.log(Level.WARNING, exception.toString(), exception);
+	}
     }
 
     public boolean exists(long id) {

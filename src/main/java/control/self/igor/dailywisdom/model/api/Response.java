@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Response {
 
     public static final String OK = "OK";
+    public static final String EXISTS = "Given entity already exists.";
     public static final String NOT_EXIST = "Entity of given id does not exist.";
 
     private String status;
