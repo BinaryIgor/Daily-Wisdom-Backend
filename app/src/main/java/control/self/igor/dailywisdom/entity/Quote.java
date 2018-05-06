@@ -3,7 +3,6 @@ package control.self.igor.dailywisdom.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,13 +37,12 @@ public class Quote implements Identifiable {
     @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private String content;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "category_quote", joinColumns = @JoinColumn(name = "quote_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-    @JsonView(View.AuthorDetails.class)
+    @JsonView(value = { View.Details.class, View.AuthorDetails.class })
     private List<Category> categories;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
-	    CascadeType.REFRESH })
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "author_id")
     @JsonView(View.List.class)
     private Author author;
@@ -122,30 +120,41 @@ public class Quote implements Identifiable {
     @Override
     public int hashCode() {
 	final int prime = 31;
-	int result = (int) (prime * id);
-	if (content != null) {
-	    result += content.length() * prime;
-	}
+	int result = 1;
+	result = prime * result + ((author == null) ? 0 : author.hashCode());
+	result = prime * result + ((categories == null) ? 0 : categories.hashCode());
+	result = prime * result + ((content == null) ? 0 : content.hashCode());
+	result = prime * result + (int) (id ^ (id >>> 32));
 	return result;
     }
 
     @Override
-    public boolean equals(Object ob) {
-	if (this == ob) {
+    public boolean equals(Object obj) {
+	if (this == obj)
 	    return true;
-	}
-	if (ob == null) {
+	if (obj == null)
 	    return false;
-	}
-	if (!(ob instanceof Quote)) {
+	if (getClass() != obj.getClass())
 	    return false;
-	}
-	Quote other = (Quote) ob;
-	if (id == other.id) {
-	    return true;
-	} else {
+	Quote other = (Quote) obj;
+	if (author == null) {
+	    if (other.author != null)
+		return false;
+	} else if (!author.equals(other.author))
 	    return false;
-	}
+	if (categories == null) {
+	    if (other.categories != null)
+		return false;
+	} else if (!categories.equals(other.categories))
+	    return false;
+	if (content == null) {
+	    if (other.content != null)
+		return false;
+	} else if (!content.equals(other.content))
+	    return false;
+	if (id != other.id)
+	    return false;
+	return true;
     }
 
     @Override

@@ -43,7 +43,6 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
     }
 
     public List<Quote> getQuotes(long id, Integer page, Integer size) {
-	System.out.println("Why we are searching?");
 	Sort sort = new Sort(Direction.ASC, "id");
 	if ((page == null || page < 1) && (size == null || size < 1)) {
 	    return entityQuoteRepository.findAll(SpecificationFactory.entityQuotes(id, entityClazz));

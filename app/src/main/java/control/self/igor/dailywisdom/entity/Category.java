@@ -3,15 +3,12 @@ package control.self.igor.dailywisdom.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -37,8 +34,7 @@ public class Category implements QuoteOwner, Searchable, Comparable<Category> {
     @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-    @JoinTable(name = "category_quote", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "quote_id"))
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
     private List<Quote> quotes;
 
     public Category(String name) {
@@ -83,30 +79,35 @@ public class Category implements QuoteOwner, Searchable, Comparable<Category> {
     @Override
     public int hashCode() {
 	final int prime = 31;
-	int result = (int) (prime * id);
-	if (name != null) {
-	    result += name.length() * prime;
-	}
+	int result = 1;
+	result = prime * result + (int) (id ^ (id >>> 32));
+	result = prime * result + ((name == null) ? 0 : name.hashCode());
+	result = prime * result + ((quotes == null) ? 0 : quotes.hashCode());
 	return result;
     }
 
     @Override
-    public boolean equals(Object ob) {
-	if (this == ob) {
+    public boolean equals(Object obj) {
+	if (this == obj)
 	    return true;
-	}
-	if (ob == null) {
+	if (obj == null)
 	    return false;
-	}
-	if (!(ob instanceof Category)) {
+	if (getClass() != obj.getClass())
 	    return false;
-	}
-	Category other = (Category) ob;
-	if (id == other.id) {
-	    return true;
-	} else {
+	Category other = (Category) obj;
+	if (id != other.id)
 	    return false;
-	}
+	if (name == null) {
+	    if (other.name != null)
+		return false;
+	} else if (!name.equals(other.name))
+	    return false;
+	if (quotes == null) {
+	    if (other.quotes != null)
+		return false;
+	} else if (!quotes.equals(other.quotes))
+	    return false;
+	return true;
     }
 
     @Override

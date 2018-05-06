@@ -125,10 +125,22 @@ public abstract class AbstractEntityQuoteCrudServiceTest<Entity extends QuoteOwn
 
     @Test
     public void createExistingEntityProperQuoteTest() {
+	createExistingEntityQuoteTest(false);
+    }
+
+    @Test
+    public void createExistingEntityDuplicatedQuoteTest() {
+	createExistingEntityQuoteTest(true);
+    }
+
+    private void createExistingEntityQuoteTest(boolean duplicated) {
 	Quote quote = DataTestUtil.createEntity(Quote.class, true);
 	setQuoteDependencies(quote);
 	Entity entity = DataTestUtil.insertEntity(entityManager, entityClazz);
 	assertTrue(crudService.createQuote(entity.getId(), quote) > 0);
+	if (duplicated) {
+	    assertTrue(crudService.createQuote(entity.getId(), quote) > 0);
+	}
     }
 
     private void setQuoteDependencies(Quote quote) {

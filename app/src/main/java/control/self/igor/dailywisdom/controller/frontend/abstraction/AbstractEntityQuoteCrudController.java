@@ -45,7 +45,7 @@ public abstract class AbstractEntityQuoteCrudController<Entity extends QuoteOwne
     @GetMapping("/{id}/list")
     public List<Quote> getQuotes(@PathVariable("id") long id,
 	    @RequestParam(value = "page", required = false) Integer page,
-	    @RequestParam(value = "page", required = false) Integer size) {
+	    @RequestParam(value = "size", required = false) Integer size) {
 	if (id > 0 && validationService.validatePageRequest(page, size)) {
 	    return crudService.getQuotes(id, page, size);
 	}
@@ -61,7 +61,7 @@ public abstract class AbstractEntityQuoteCrudController<Entity extends QuoteOwne
     }
 
     @GetMapping("/{id}/{quoteId}")
-    @JsonView(View.List.class)
+    @JsonView(View.Details.class)
     public Quote getQuote(@PathVariable("id") long id, @PathVariable("quoteId") long quoteId) {
 	if (!validationService.validateIds(id, quoteId)) {
 	    throw new BadRequestException();
@@ -80,7 +80,7 @@ public abstract class AbstractEntityQuoteCrudController<Entity extends QuoteOwne
 	}
 	boolean quoteCreated;
 	try {
-	    quoteCreated = crudService.createQuote(id, quote) > 1;
+	    quoteCreated = crudService.createQuote(id, quote) > 0;
 	} catch (DataIntegrityViolationException exception) {
 	    LOGGER.log(Level.WARNING, exception.toString(), exception);
 	    quoteCreated = false;
