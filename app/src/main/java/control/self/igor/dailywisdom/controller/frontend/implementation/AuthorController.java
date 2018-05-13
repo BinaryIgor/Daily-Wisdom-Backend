@@ -1,8 +1,6 @@
 package control.self.igor.dailywisdom.controller.frontend.implementation;
 
 import java.io.File;
-import java.util.NoSuchElementException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +59,7 @@ public class AuthorController extends AbstractCrudAndSearchController<Author, Se
 
     @GetMapping("/{id}/image")
     public ResponseEntity<byte[]> getAuthorPicture(@PathVariable("id") long id) {
-	String authorImagePath = getAuthorService().getAuthorImagePath(id);
+	String authorImagePath = getAuthorService().getImagePath(id);
 	if (authorImagePath == null || authorImagePath.isEmpty()) {
 	    throw new NotFoundException();
 	}
@@ -79,13 +77,7 @@ public class AuthorController extends AbstractCrudAndSearchController<Author, Se
 	    throw new BadRequestException();
 	}
 	byte[] image = imageService.getImageBytes(multipartFile, AUTHOR_IMAGE_WIDTH, AUTHOR_IMAGE_HEIGHT);
-	Author author = null;
-	try {
-	    author = crudService.getEntity(id);
-	} catch (NoSuchElementException exception) {
-	    LOGGER.log(Level.WARNING, exception.toString(), exception);
-	}
-	if ((image == null || image.length < 1) || author == null) {
+	if ((image == null || image.length < 1)) {
 	    throw new WrongDataException();
 	}
 	String authorImagePath = authorsImagesPath + "/" + imageService.getImageFileNameWithFormat(String.valueOf(id));
@@ -93,8 +85,7 @@ public class AuthorController extends AbstractCrudAndSearchController<Author, Se
 	if (imageFile == null || !imageFile.exists()) {
 	    throw new InternalErrorException();
 	}
-	author.setImagePath(authorImagePath);
-	if (!crudService.updateEntity(author)) {
+	if (!((AbstractAuthorCrudService) crudService).saveImagePath(id, authorImagePath)) {
 	    throw new WrongDataException();
 	}
 	return new Response(Response.OK);

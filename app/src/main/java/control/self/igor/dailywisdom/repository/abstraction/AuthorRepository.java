@@ -2,6 +2,7 @@
 package control.self.igor.dailywisdom.repository.abstraction;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +17,8 @@ public interface AuthorRepository extends PagingAndSortingRepository<Author, Lon
 
     @Query("select a.imagePath from Author a where a.id = :id")
     String getAuthorImagePath(@Param("id") long id);
+
+    @Modifying
+    @Query("update Author a set a.imagePath = :imagePath where a.id = :id")
+    int updateImagePath(@Param("id") long id, @Param("imagePath") String imagePath);
 }

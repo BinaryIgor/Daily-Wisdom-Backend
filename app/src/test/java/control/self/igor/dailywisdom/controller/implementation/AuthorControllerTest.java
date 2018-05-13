@@ -85,7 +85,7 @@ public class AuthorControllerTest extends AbstractCrudAndSearchControllerTest<Au
     @Test
     public void getExistingAuthorImageTest() throws Exception {
 	byte[] mockImage = MockUtil.createImage();
-	when(crudService.getAuthorImagePath(ArgumentMatchers.any(Long.class))).thenReturn("/storage/tmp/1.jpg");
+	when(crudService.getImagePath(ArgumentMatchers.any(Long.class))).thenReturn("/storage/tmp/1.jpg");
 	when(imageService.getImageBytes(ArgumentMatchers.any(String.class))).thenReturn(mockImage);
 	String url = baseUrl + "/1/image";
 	byte[] returnedImage = mockMvc.perform(get(url)).andExpect(status().isOk()).andReturn().getResponse()
@@ -95,7 +95,7 @@ public class AuthorControllerTest extends AbstractCrudAndSearchControllerTest<Au
 
     @Test
     public void getNonExistingAuthorImageTest() throws Exception {
-	when(crudService.getAuthorImagePath(ArgumentMatchers.any(Long.class))).thenReturn(null);
+	when(crudService.getImagePath(ArgumentMatchers.any(Long.class))).thenReturn(null);
 	String url = baseUrl + "/1/image";
 	mockMvc.perform(get(url)).andExpect(status().isNotFound());
     }

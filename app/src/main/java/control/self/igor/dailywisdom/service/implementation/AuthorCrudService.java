@@ -24,8 +24,19 @@ public class AuthorCrudService extends AbstractAuthorCrudService {
     }
 
     @Override
-    public String getAuthorImagePath(long id) {
+    public String getImagePath(long id) {
 	return getAuthorRepository().getAuthorImagePath(id);
+    }
+
+    @Override
+    public boolean saveAuthorDescription(long id, AuthorDescription authorDescription) {
+
+	return false;
+    }
+
+    @Override
+    public boolean saveImagePath(long id, String imagePath) {
+	return getAuthorRepository().updateImagePath(id, imagePath) > 0;
     }
 
 }

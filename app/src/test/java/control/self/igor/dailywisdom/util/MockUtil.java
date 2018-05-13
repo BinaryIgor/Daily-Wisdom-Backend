@@ -84,6 +84,12 @@ public class MockUtil {
 	return quotes;
     }
 
+    public static List<Quote> createCategoryQuotes(Author author, Category category) {
+	List<Category> categoryAsList = new ArrayList<>();
+	categoryAsList.add(category);
+	return createQuotes(author, categoryAsList);
+    }
+
     public static List<Category> createRandomCategories(List<Category> existingCategories) {
 	return existingCategories.subList(0, TestUtil.getRandomNumber(1, existingCategories.size()));
     }
@@ -121,7 +127,7 @@ public class MockUtil {
 	return new Quote("Mocked, very long quote", createAuthor());
     }
 
-    public static Quote crateQuoteWithDependencies(Author author, List<Category> categories) {
+    public static Quote createQuoteWithDependencies(Author author, List<Category> categories) {
 	Quote quote = new Quote("Super, ultra, very long quote", author);
 	quote.setCategories(categories);
 	return quote;
@@ -137,26 +143,6 @@ public class MockUtil {
 
     public static User createDifferentUser(User user) {
 	return new User(user.getName() + "ab", user.getPassword() + "ab", user.getUserRole());
-    }
-
-    public static Category createCategoryWithQuotes() {
-	Category category = new Category("Mock");
-	List<Quote> quotes = new ArrayList<>();
-	quotes.add(new Quote("Mocked, very long quote", new Author("AuthorA", MOCKED_IMAGES_FILE_PATH)));
-	quotes.add(new Quote("Mocked, even longer quote", new Author("AuthorB", MOCKED_IMAGES_FILE_PATH)));
-	quotes.add(new Quote("Mocked, even longer tha long quote", new Author("AuthorC", MOCKED_IMAGES_FILE_PATH)));
-	category.setQuotes(quotes);
-	return category;
-    }
-
-    public static Category createCategoryWithQuotes(Author author) {
-	Category category = createCategory();
-	List<Quote> quotes = new ArrayList<>();
-	quotes.add(new Quote("Mocked, very long quote", author));
-	quotes.add(new Quote("Mocked, even longer quote", author));
-	quotes.add(new Quote("Mocked, even longer tha long quote", author));
-	category.setQuotes(quotes);
-	return category;
     }
 
     public static List<TestComparable> createComparableList() {

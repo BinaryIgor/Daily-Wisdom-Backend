@@ -36,7 +36,7 @@ public class Author implements QuoteOwner, Searchable {
     @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private String name;
 
-    @Column(name = "image_path")
+    @Column(name = "image_path", updatable = false)
     private String imagePath;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "author", cascade = CascadeType.ALL)

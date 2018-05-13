@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import control.self.igor.dailywisdom.entity.Identifiable;
+import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.util.DataTestUtil;
 
 @Transactional
@@ -38,6 +39,10 @@ public abstract class AbstractCrudServiceTest<Entity extends Identifiable> {
     @Test
     public void properCreateTest() {
 	Entity toInsertEntity = DataTestUtil.createEntity(entityClazz, true);
+	if (entityClazz.isAssignableFrom(Quote.class)) {
+	    Quote quote = (Quote) toInsertEntity;
+	    quote.setAuthor(entityManager.persist(quote.getAuthor()));
+	}
 	long id = crudService.createEntity(toInsertEntity);
 	assertTrue(id > 0);
 	Entity insertedEntity = crudService.getEntity(id);
@@ -80,7 +85,7 @@ public abstract class AbstractCrudServiceTest<Entity extends Identifiable> {
 	if (proper) {
 	    assertTrue(crudService.updateEntity(entity));
 	} else {
-	    crudService.updateEntity(entity);
+	    assertFalse(crudService.updateEntity(entity));
 	}
     }
 
@@ -99,6 +104,10 @@ public abstract class AbstractCrudServiceTest<Entity extends Identifiable> {
     @Test
     public void duplicatedCreateTest() {
 	Entity entity = DataTestUtil.createEntity(entityClazz, true);
+	if (entityClazz.isAssignableFrom(Quote.class)) {
+	    Quote quote = (Quote) entity;
+	    quote.setAuthor(entityManager.persist(quote.getAuthor()));
+	}
 	long firstId = crudService.createEntity(entity);
 	long secondId = crudService.createEntity(entity);
 	assertEquals(firstId, secondId);

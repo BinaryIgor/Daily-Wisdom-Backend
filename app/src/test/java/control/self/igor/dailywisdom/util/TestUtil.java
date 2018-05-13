@@ -3,6 +3,9 @@ package control.self.igor.dailywisdom.util;
 public class TestUtil {
 
     public static int getRandomNumber(int min, int max) {
+	if (min == max) {
+	    return min;
+	}
 	return min + ((int) (Math.random() * max));
     }
 

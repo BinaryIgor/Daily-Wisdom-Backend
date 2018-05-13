@@ -43,13 +43,13 @@ public class AuthorCrudServiceTest extends AbstractCrudServiceTest<Author> {
     @Test
     public void getExistingAuthorImagePathTest() {
 	Author author = DataTestUtil.insertEntity(entityManager, Author.class);
-	String authorImagePath = ((AuthorCrudService) crudService).getAuthorImagePath(author.getId());
+	String authorImagePath = ((AuthorCrudService) crudService).getImagePath(author.getId());
 	assertTrue(author.getImagePath().equals(authorImagePath));
     }
 
     @Test
     public void getNonExistingAuthorImagePathTest() {
-	String authorImagePath = ((AuthorCrudService) crudService).getAuthorImagePath(NON_EXISTING_ENTITY_ID);
+	String authorImagePath = ((AuthorCrudService) crudService).getImagePath(NON_EXISTING_ENTITY_ID);
 	assertFalse(authorImagePath != null && !authorImagePath.isEmpty());
     }
 

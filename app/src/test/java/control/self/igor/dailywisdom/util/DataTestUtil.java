@@ -41,6 +41,15 @@ public class DataTestUtil {
 
     public static <Entity extends Identifiable> List<Entity> insertEntities(TestEntityManager entityManager,
 	    Class<Entity> clazz) {
+	if (clazz.isAssignableFrom(Quote.class)) {
+	    Author author = MockUtil.createAuthor();
+	    List<Category> categories = MockUtil.createCategories();
+	    author = entityManager.persist(author);
+	    insertList(entityManager, categories);
+	    List<Quote> quotes = MockUtil.createQuotes(author, categories);
+	    insertList(entityManager, quotes);
+	    return (List<Entity>) quotes;
+	}
 	List<Entity> entities = createEntities(clazz);
 	if (entities == null || entities.isEmpty()) {
 	    return null;
@@ -64,15 +73,18 @@ public class DataTestUtil {
 
     public static <Entity extends Identifiable> Entity insertEntityWithDependency(TestEntityManager entityManager,
 	    Class<Entity> clazz) {
-	if (clazz.isAssignableFrom(Category.class)) {
-	    return (Entity) entityManager.persistAndFlush(MockUtil.createCategoryWithQuotes());
-	}
+	Author author = entityManager.persist(MockUtil.createAuthor());
 	if (clazz.isAssignableFrom(Author.class)) {
-	    Author author = entityManager.persist(MockUtil.createAuthor());
 	    List<Category> categories = MockUtil.createCategories();
 	    insertList(entityManager, categories);
 	    insertList(entityManager, MockUtil.createQuotes(author, categories));
 	    return (Entity) entityManager.persistAndFlush(author);
+	}
+	if (clazz.isAssignableFrom(Category.class)) {
+	    Category category = entityManager.persist(MockUtil.createCategory());
+	    List<Quote> quotes = MockUtil.createCategoryQuotes(author, category);
+	    category.setQuotes(quotes);
+	    return (Entity) entityManager.persistAndFlush(category);
 	}
 	return null;
     }
@@ -86,7 +98,9 @@ public class DataTestUtil {
 	    return (Entity) entityManager.persistAndFlush(MockUtil.createAuthor());
 	}
 	if (clazz.isAssignableFrom(Quote.class)) {
-	    return (Entity) entityManager.persistAndFlush(MockUtil.createQuote());
+	    Quote quote = MockUtil.createQuote();
+	    entityManager.persist(quote.getAuthor());
+	    return (Entity) entityManager.persistAndFlush(quote);
 	}
 	return null;
     }
@@ -142,6 +156,7 @@ public class DataTestUtil {
 	    Author author = (Author) entity;
 	    String name = proper ? (author.getName() + "abc") : null;
 	    author.setName(name);
+	    author.setImagePath(null);
 	}
 	if (clazz.isAssignableFrom(Category.class)) {
 	    Category category = (Category) entity;

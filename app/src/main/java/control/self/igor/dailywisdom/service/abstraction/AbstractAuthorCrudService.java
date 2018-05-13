@@ -15,7 +15,11 @@ public abstract class AbstractAuthorCrudService extends AbstractCrudService<Auth
 
     public abstract AuthorDescription getAuthorDescription(long id);
 
-    public abstract String getAuthorImagePath(long id);
+    public abstract boolean saveAuthorDescription(long id, AuthorDescription authorDescription);
+
+    public abstract String getImagePath(long id);
+
+    public abstract boolean saveImagePath(long id, String imagePath);
 
     public AuthorRepository getAuthorRepository() {
 	return (AuthorRepository) repository;
