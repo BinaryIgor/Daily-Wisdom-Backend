@@ -123,6 +123,10 @@ public class MockUtil {
 	return author;
     }
 
+    public static AuthorDescription createAuthorDescription(Author author) {
+	return new AuthorDescription(author, "He was very wise, inteligent and pragmatic fellow.");
+    }
+
     public static Quote createQuote() {
 	return new Quote("Mocked, very long quote", createAuthor());
     }

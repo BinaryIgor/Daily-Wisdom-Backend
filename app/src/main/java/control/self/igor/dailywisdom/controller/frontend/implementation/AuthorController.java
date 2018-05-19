@@ -3,6 +3,8 @@ package control.self.igor.dailywisdom.controller.frontend.implementation;
 import java.io.File;
 import java.util.logging.Logger;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,6 +60,18 @@ public class AuthorController extends AbstractCrudAndSearchController<Author, Se
 	return getAuthorService().getAuthorDescription(id);
     }
 
+    @PutMapping("/{id}/description")
+    public Response putAuthorDescription(@PathVariable("id") long id,
+	    @Valid @RequestBody AuthorDescription authorDescription) {
+	if (id < 1) {
+	    throw new BadRequestException();
+	}
+	if (!getAuthorService().saveAuthorDescription(id, authorDescription)) {
+	    throw new WrongDataException();
+	}
+	return new Response(Response.OK);
+    }
+
     @GetMapping("/{id}/image")
     public ResponseEntity<byte[]> getAuthorPicture(@PathVariable("id") long id) {
 	String authorImagePath = getAuthorService().getImagePath(id);
@@ -85,7 +100,7 @@ public class AuthorController extends AbstractCrudAndSearchController<Author, Se
 	if (imageFile == null || !imageFile.exists()) {
 	    throw new InternalErrorException();
 	}
-	if (!((AbstractAuthorCrudService) crudService).saveImagePath(id, authorImagePath)) {
+	if (!getAuthorService().saveImagePath(id, authorImagePath)) {
 	    throw new WrongDataException();
 	}
 	return new Response(Response.OK);

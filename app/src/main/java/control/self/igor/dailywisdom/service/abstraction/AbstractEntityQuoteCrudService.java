@@ -124,14 +124,6 @@ public class AbstractEntityQuoteCrudService<Entity extends QuoteOwner> {
 	try {
 	    Author author = authorRepository.findById(id).get();
 	    quote.setAuthor(author);
-	    List<Category> categories = quote.getCategories();
-	    if (categories == null || categories.isEmpty()) {
-		return true;
-	    }
-	    List<Category> existingCategories = categoryRepository.findByIdIn(Category.getCategoriesIds(categories));
-	    if (!comparatorService.compareLists(categories, existingCategories)) {
-		return false;
-	    }
 	} catch (NoSuchElementException exception) {
 	    LOGGER.log(Level.WARNING, exception.toString(), exception);
 	    return false;

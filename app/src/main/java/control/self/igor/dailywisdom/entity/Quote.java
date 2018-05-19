@@ -39,7 +39,7 @@ public class Quote implements Identifiable {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "category_quote", joinColumns = @JoinColumn(name = "quote_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-    @JsonView(value = { View.Details.class, View.AuthorDetails.class })
+    @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private List<Category> categories;
 
     @OneToOne(fetch = FetchType.EAGER)

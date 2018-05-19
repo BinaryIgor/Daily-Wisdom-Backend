@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import control.self.igor.dailywisdom.entity.Author;
+import control.self.igor.dailywisdom.entity.AuthorDescription;
 import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.entity.Quote;
@@ -157,6 +158,11 @@ public class DataTestUtil {
 	    String name = proper ? (author.getName() + "abc") : null;
 	    author.setName(name);
 	    author.setImagePath(null);
+	}
+	if (clazz.isAssignableFrom(AuthorDescription.class)) {
+	    AuthorDescription authorDescription = (AuthorDescription) entity;
+	    String description = proper ? (authorDescription.getDescription() + "abc") : null;
+	    authorDescription.setDescription(description);
 	}
 	if (clazz.isAssignableFrom(Category.class)) {
 	    Category category = (Category) entity;

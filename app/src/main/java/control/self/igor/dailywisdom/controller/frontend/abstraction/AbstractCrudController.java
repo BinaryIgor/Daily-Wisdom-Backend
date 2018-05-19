@@ -68,13 +68,14 @@ public abstract class AbstractCrudController<Entity extends Identifiable> {
 
     @PostMapping("")
     public Response createEntity(@Valid @RequestBody Entity entity) {
+	long id;
 	try {
-	    crudService.createEntity(entity);
+	    id = crudService.createEntity(entity);
 	} catch (DataIntegrityViolationException exception) {
 	    LOGGER.log(Level.WARN, exception.toString(), exception);
 	    throw new BadRequestException(Response.EXISTS);
 	}
-	return new Response(Response.OK);
+	return Response.okWithId(id);
     }
 
     @PutMapping("/{id}")
