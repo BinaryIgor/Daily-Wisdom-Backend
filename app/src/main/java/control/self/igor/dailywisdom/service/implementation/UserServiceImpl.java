@@ -1,6 +1,12 @@
 package control.self.igor.dailywisdom.service.implementation;
 
+import java.util.Collections;
+import java.util.NoSuchElementException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import control.self.igor.dailywisdom.entity.User;
@@ -23,12 +29,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean authenticate(User user) {
+    public User authenticate(User user) {
 	User foundUser = userRepository.findByNameIgnoreCase(user.getName());
-	if (foundUser == null) {
-	    return false;
+	if (foundUser == null || !foundUser.getPassword().equals(user.getPassword())) {
+	    throw new NoSuchElementException();
 	}
-	return foundUser.getPassword().equals(user.getPassword());
+	return foundUser;
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+	User user = userRepository.findByNameIgnoreCase(username);
+	if (user == null) {
+	    throw new UsernameNotFoundException(username);
+	}
+	return new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(),
+		Collections.singletonList(new SimpleGrantedAuthority(user.getUserRole().getRole())));
+    }
 }

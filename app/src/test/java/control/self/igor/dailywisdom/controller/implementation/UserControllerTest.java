@@ -70,7 +70,7 @@ public class UserControllerTest {
 	} else {
 	    url += "logout";
 	}
-	User user = MockUtil.createUser(UserRole.Role.admin.getTranslation());
+	User user = MockUtil.createUser(UserRole.Role.ADMIN.getTranslation());
 	when(userService.authenticate(ArgumentMatchers.any(User.class))).thenReturn(true);
 	mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(jsonService.serialize(user)))
 		.andExpect(status().isOk());

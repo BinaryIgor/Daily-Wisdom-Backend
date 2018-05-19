@@ -23,7 +23,6 @@ public class DailyWisdomBackendApplication {
 	return mapper;
     }
 
-    // TODO
     @Bean
     public WebMvcConfigurer corsConfigurer() {
 	return new WebMvcConfigurer() {

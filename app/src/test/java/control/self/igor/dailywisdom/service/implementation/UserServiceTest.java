@@ -42,7 +42,7 @@ public class UserServiceTest {
 
     @Test
     public void authenticateUserTest() {
-	String role = UserRole.Role.admin.getTranslation();
+	String role = UserRole.Role.ADMIN.getTranslation();
 	User user = entityManager.persist(MockUtil.createUser(role));
 	assertTrue(userService.authenticate(user));
 	assertFalse(userService.authenticate(MockUtil.createDifferentUser(user)));

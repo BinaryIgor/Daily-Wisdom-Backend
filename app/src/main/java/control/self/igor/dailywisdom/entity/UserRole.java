@@ -19,7 +19,7 @@ public class UserRole implements Identifiable {
 
     public enum Role {
 
-	guest("guest"), admin("admin");
+	GUEST("guest"), ADMIN("admin");
 
 	private String translation;
 
