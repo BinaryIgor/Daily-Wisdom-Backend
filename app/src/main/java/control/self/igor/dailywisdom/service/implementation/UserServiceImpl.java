@@ -13,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import control.self.igor.dailywisdom.entity.User;
-import control.self.igor.dailywisdom.entity.UserRole;
 import control.self.igor.dailywisdom.repository.abstraction.UserRepository;
 import control.self.igor.dailywisdom.service.abstraction.UserService;
 
@@ -67,10 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserRole getUserRoleByName(String name) {
-	if (name != null) {
-	    name = name.trim().toLowerCase();
-	}
+    public String getUserRoleByName(String name) {
 	return userRepository.getUserRoleByName(name);
     }
 }

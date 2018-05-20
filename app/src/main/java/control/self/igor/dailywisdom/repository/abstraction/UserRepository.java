@@ -14,8 +14,8 @@ public interface UserRepository extends CrudRepository<User, Long> {
     @Query("SELECT ur FROM UserRole ur WHERE ur.role = 'guest'")
     UserRole getGuest();
 
-    @Query("SELECT ur FROM UserRole ur INNER JOIN User u ON u.name = :name WHERE u.userRole.id = ur.id")
-    UserRole getUserRoleByName(@Param("name") String name);
+    @Query("SELECT ur.role FROM UserRole ur INNER JOIN User u ON u.name = :name WHERE u.userRole.id = ur.id")
+    String getUserRoleByName(@Param("name") String name);
 
     boolean existsByNameIgnoreCase(String name);
 

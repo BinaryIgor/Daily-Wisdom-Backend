@@ -36,9 +36,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	httpSecurity.cors().and().csrf().disable().authorizeRequests()
 		.antMatchers("/data/**", SecurityConstants.SIGN_UP_URL, SecurityConstants.LOGIN_URL).permitAll()
 		.anyRequest().authenticated().and()
-		.addFilter(new JwtAuthenticationFilter(authenticationManager(), jsonService, streamService))
-		.addFilter(new JwtAuthorizationFilter(authenticationManager(), streamService, userService))
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		.addFilter(
+			new JwtAuthenticationFilter(authenticationManager(), userService, jsonService, streamService))
+		.addFilter(new JwtAuthorizationFilter(authenticationManager(), streamService)).sessionManagement()
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override

@@ -7,4 +7,16 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ForbiddenException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
+    public ForbiddenException() {
+
+    }
+
+    private ForbiddenException(String message) {
+	super(message);
+    }
+
+    public static ForbiddenException createAdminOnlyException() {
+	return new ForbiddenException("Only admin can create, update and delete entities");
+    }
+
 }

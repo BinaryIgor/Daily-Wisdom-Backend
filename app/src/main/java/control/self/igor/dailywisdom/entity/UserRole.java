@@ -32,6 +32,10 @@ public class UserRole implements Identifiable {
 	public String getTranslation() {
 	    return translation;
 	}
+
+	public static boolean isAdmin(String role) {
+	    return ADMIN.translation.equals(role);
+	}
     }
 
     public UserRole() {

@@ -71,10 +71,10 @@ public class UserControllerTest {
 	    url += "logout";
 	}
 	User user = MockUtil.createUser(UserRole.Role.ADMIN.getTranslation());
-	when(userService.authenticate(ArgumentMatchers.any(User.class))).thenReturn(true);
+	when(userService.authenticate(ArgumentMatchers.any(User.class))).thenReturn(user);
 	mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(jsonService.serialize(user)))
 		.andExpect(status().isOk());
-	when(userService.authenticate(ArgumentMatchers.any(User.class))).thenReturn(false);
+	when(userService.authenticate(ArgumentMatchers.any(User.class))).thenReturn(null);
 	mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON).content(jsonService.serialize(user)))
 		.andExpect(status().isNotFound());
     }

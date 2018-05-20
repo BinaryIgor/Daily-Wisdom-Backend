@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import control.self.igor.dailywisdom.entity.User;
 import control.self.igor.dailywisdom.exception.BadRequestException;
 import control.self.igor.dailywisdom.model.api.Response;
-import control.self.igor.dailywisdom.model.authorization.LoginData;
+import control.self.igor.dailywisdom.model.authorization.LoginResponse;
 import control.self.igor.dailywisdom.model.authorization.TokenData;
 import control.self.igor.dailywisdom.service.abstraction.UserService;
 
@@ -36,14 +36,14 @@ public class UserController {
     }
 
     @PostMapping("/sign-up")
-    public LoginData signUp(@Valid @RequestBody User user) {
+    public LoginResponse signUp(@Valid @RequestBody User user) {
 	try {
 	    userService.signUp(user);
 	} catch (EntityExistsException exception) {
 	    LOGGER.log(Level.WARNING, exception.toString(), exception);
 	    throw BadRequestException.entityExists(User.class);
 	}
-	return new LoginData(user.getUserRole().getRole(),
+	return new LoginResponse(user.getUserRole().getRole(),
 		new TokenData("mock", "mock", System.currentTimeMillis() + 24 * 3600 * 1000));
     }
 

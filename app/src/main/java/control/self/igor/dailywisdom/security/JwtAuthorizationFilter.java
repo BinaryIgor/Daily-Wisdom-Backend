@@ -17,22 +17,19 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-import control.self.igor.dailywisdom.entity.UserRole;
 import control.self.igor.dailywisdom.service.abstraction.StreamService;
-import control.self.igor.dailywisdom.service.abstraction.UserService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private static final Logger LOGGER = Logger.getLogger(JwtAuthorizationFilter.class.getSimpleName());
     private StreamService streamService;
-    private UserService userService;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, StreamService streamService,
-	    UserService userService) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, StreamService streamService) {
 	super(authenticationManager);
 	this.streamService = streamService;
-	this.userService = userService;
+
     }
 
     @Override
@@ -65,14 +62,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	if (token == null) {
 	    return null;
 	}
-	String user = Jwts.parser().setSigningKey(SecurityConstants.SECRET.getBytes())
-		.parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, "")).getBody().getSubject();
+	Claims claims = Jwts.parser().setSigningKey(SecurityConstants.SECRET.getBytes())
+		.parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, "")).getBody();
+	String user = claims.getSubject();
+	String role = claims.get(SecurityConstants.TOKEN_ROLE_CLAIM, String.class);
 	if (user == null) {
 	    return null;
 	}
-	UserRole userRole = userService.getUserRoleByName(user);
-	LOGGER.info("User of name: " + user + " have role = " + userRole.getRole());
 	return new UsernamePasswordAuthenticationToken(user, null,
-		Collections.singletonList(new SimpleGrantedAuthority(userRole.getRole())));
+		Collections.singletonList(new SimpleGrantedAuthority(role)));
     }
 }

@@ -22,6 +22,7 @@ import control.self.igor.dailywisdom.controller.frontend.abstraction.AbstractCru
 import control.self.igor.dailywisdom.entity.Author;
 import control.self.igor.dailywisdom.entity.AuthorDescription;
 import control.self.igor.dailywisdom.exception.BadRequestException;
+import control.self.igor.dailywisdom.exception.ForbiddenException;
 import control.self.igor.dailywisdom.exception.InternalErrorException;
 import control.self.igor.dailywisdom.exception.NotFoundException;
 import control.self.igor.dailywisdom.exception.WrongDataException;
@@ -66,6 +67,9 @@ public class AuthorController extends AbstractCrudAndSearchController<Author, Se
 	if (id < 1) {
 	    throw new BadRequestException();
 	}
+	if (!isAdmin()) {
+	    throw ForbiddenException.createAdminOnlyException();
+	}
 	if (!getAuthorService().saveAuthorDescription(id, authorDescription)) {
 	    throw new WrongDataException();
 	}
@@ -90,6 +94,9 @@ public class AuthorController extends AbstractCrudAndSearchController<Author, Se
     public Response putAuthorImage(@PathVariable("id") long id, @RequestPart("image") MultipartFile multipartFile) {
 	if (id < 1) {
 	    throw new BadRequestException();
+	}
+	if (!isAdmin()) {
+	    throw ForbiddenException.createAdminOnlyException();
 	}
 	byte[] image = imageService.getImageBytes(multipartFile, AUTHOR_IMAGE_WIDTH, AUTHOR_IMAGE_HEIGHT);
 	if ((image == null || image.length < 1)) {
