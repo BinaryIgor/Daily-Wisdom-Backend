@@ -1,12 +1,15 @@
 package control.self.igor.dailywisdom.controller.frontend.implementation;
 
-import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import control.self.igor.dailywisdom.entity.User;
-import control.self.igor.dailywisdom.exception.UnauthorizedException;
+import control.self.igor.dailywisdom.exception.BadRequestException;
 import control.self.igor.dailywisdom.model.api.Response;
 import control.self.igor.dailywisdom.model.authorization.LoginData;
-import control.self.igor.dailywisdom.model.authorization.Token;
+import control.self.igor.dailywisdom.model.authorization.TokenData;
 import control.self.igor.dailywisdom.service.abstraction.UserService;
 
 @RestController
@@ -32,32 +35,29 @@ public class UserController {
 	this.userService = userService;
     }
 
-    @PostMapping("/login")
-    public LoginData login(@Valid @RequestBody User user) {
+    @PostMapping("/sign-up")
+    public LoginData signUp(@Valid @RequestBody User user) {
 	try {
-	    user = userService.authenticate(user);
-	} catch (NoSuchElementException exception) {
+	    userService.signUp(user);
+	} catch (EntityExistsException exception) {
 	    LOGGER.log(Level.WARNING, exception.toString(), exception);
-	    throw new UnauthorizedException();
+	    throw BadRequestException.entityExists(User.class);
 	}
 	return new LoginData(user.getUserRole().getRole(),
-		new Token("mock", "mock", System.currentTimeMillis() + 24 * 3600 * 1000));
+		new TokenData("mock", "mock", System.currentTimeMillis() + 24 * 3600 * 1000));
     }
 
-    @GetMapping("/get")
-    public User getUser() {
-	return new User();
-    }
-
-    // TODO logic implementation
-    @PostMapping("/logout")
-    public Response logout(@Valid @RequestBody User user) {
-	try {
-	    user = userService.authenticate(user);
-	} catch (NoSuchElementException exception) {
-	    LOGGER.log(Level.WARNING, exception.toString(), exception);
-	    throw new UnauthorizedException();
+    @GetMapping("/test")
+    public Response test() {
+	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	System.out.println("Username: " + authentication.getName());
+	if (authentication.getAuthorities().isEmpty()) {
+	    System.out.println("User does not have any authorithies!");
+	} else {
+	    for (GrantedAuthority authorithy : authentication.getAuthorities()) {
+		System.out.println("authorithy: " + authorithy.getAuthority());
+	    }
 	}
-	return new Response(Response.OK);
+	return new Response("dada");
     }
 }

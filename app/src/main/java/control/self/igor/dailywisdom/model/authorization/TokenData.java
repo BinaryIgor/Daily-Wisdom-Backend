@@ -1,12 +1,12 @@
 package control.self.igor.dailywisdom.model.authorization;
 
-public class Token {
+public class TokenData {
 
     private String accessToken;
     private String refreshToken;
     private long expirationDate;
 
-    public Token(String accessToken, String refreshToken, long expirationDate) {
+    public TokenData(String accessToken, String refreshToken, long expirationDate) {
 	this.accessToken = accessToken;
 	this.refreshToken = refreshToken;
 	this.expirationDate = expirationDate;

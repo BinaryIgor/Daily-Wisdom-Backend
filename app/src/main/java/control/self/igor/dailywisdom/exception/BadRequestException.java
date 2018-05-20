@@ -16,4 +16,8 @@ public class BadRequestException extends RuntimeException {
 	super(message);
     }
 
+    public static <T> BadRequestException entityExists(Class<T> clazz) {
+	return new BadRequestException(clazz.getSimpleName() + " already exists.");
+    }
+
 }

@@ -1,6 +1,7 @@
 package control.self.igor.dailywisdom.service.implementation;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +26,16 @@ public class JsonServiceImpl implements JsonService {
     public <T> T deserialize(String json, Class<T> clazz) {
 	try {
 	    return objectMapper.readValue(json, clazz);
+	} catch (IOException exception) {
+	    LOGGER.log(Level.WARNING, exception.toString(), exception);
+	    return null;
+	}
+    }
+
+    @Override
+    public <T> T deserialize(InputStream inputStream, Class<T> clazz) {
+	try {
+	    return objectMapper.readValue(inputStream, clazz);
 	} catch (IOException exception) {
 	    LOGGER.log(Level.WARNING, exception.toString(), exception);
 	    return null;

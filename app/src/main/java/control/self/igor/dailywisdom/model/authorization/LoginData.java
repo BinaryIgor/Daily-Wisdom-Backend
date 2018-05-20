@@ -3,9 +3,9 @@ package control.self.igor.dailywisdom.model.authorization;
 public class LoginData {
 
     private String role;
-    private Token token;
+    private TokenData token;
 
-    public LoginData(String role, Token token) {
+    public LoginData(String role, TokenData token) {
 	this.role = role;
 	this.token = token;
     }
@@ -14,7 +14,7 @@ public class LoginData {
 	return role;
     }
 
-    public Token getToken() {
+    public TokenData getToken() {
 	return token;
     }
 

@@ -5,8 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "user_role")
 public class UserRole implements Identifiable {
 
     @Id
@@ -36,7 +38,11 @@ public class UserRole implements Identifiable {
 
     }
 
-    public UserRole(String role) {
+    public static UserRole createGuest() {
+	return new UserRole(Role.GUEST.translation);
+    }
+
+    private UserRole(String role) {
 	this.role = role;
     }
 
