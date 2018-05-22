@@ -17,6 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+import control.self.igor.dailywisdom.security.SecurityConstants.TokenType;
 import control.self.igor.dailywisdom.service.abstraction.StreamService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -38,7 +39,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 	System.out.println("Traying to filter something...");
 	String requestUrl = request.getRequestURI();
 	LOGGER.info("Request url = " + requestUrl);
-	if (requestUrl.equals(SecurityConstants.SIGN_UP_URL) || requestUrl.equals(SecurityConstants.LOGIN_URL)) {
+	String authorizationHeader = request.getHeader(SecurityConstants.AUTHORIZATION_HEADER);
+	if (authorizationHeader == null || authorizationHeader.isEmpty()) {
 	    chain.doFilter(request, response);
 	    return;
 	}
@@ -66,7 +68,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 		.parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, "")).getBody();
 	String user = claims.getSubject();
 	String role = claims.get(SecurityConstants.TOKEN_ROLE_CLAIM, String.class);
-	if (user == null) {
+	String tokenType = claims.get(SecurityConstants.TOKEN_TYPE_KEY, String.class);
+	System.out.println("JwtAuthorizationFilter.getAuthentication()");
+	System.out.println("TokenType = " + tokenType);
+	if (user == null || tokenType == null || !TokenType.isAccessToken(tokenType)) {
 	    return null;
 	}
 	return new UsernamePasswordAuthenticationToken(user, null,

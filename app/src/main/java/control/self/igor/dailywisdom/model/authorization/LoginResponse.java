@@ -3,19 +3,25 @@ package control.self.igor.dailywisdom.model.authorization;
 public class LoginResponse {
 
     private String role;
-    private TokenData token;
+    private Token accessToken;
+    private Token refreshToken;
 
-    public LoginResponse(String role, TokenData token) {
+    public LoginResponse(String role, Token accessToken, Token refreshToken) {
 	this.role = role;
-	this.token = token;
+	this.accessToken = accessToken;
+	this.refreshToken = refreshToken;
     }
 
     public String getRole() {
 	return role;
     }
 
-    public TokenData getToken() {
-	return token;
+    public Token getAccessToken() {
+	return accessToken;
+    }
+
+    public Token getRefreshToken() {
+	return refreshToken;
     }
 
 }

@@ -7,10 +7,7 @@ import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,10 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import control.self.igor.dailywisdom.entity.User;
 import control.self.igor.dailywisdom.exception.BadRequestException;
-import control.self.igor.dailywisdom.model.api.Response;
 import control.self.igor.dailywisdom.model.authorization.LoginResponse;
-import control.self.igor.dailywisdom.model.authorization.TokenData;
+import control.self.igor.dailywisdom.model.authorization.Token;
+import control.self.igor.dailywisdom.service.abstraction.TokenService;
 import control.self.igor.dailywisdom.service.abstraction.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
 
 @RestController
 @RequestMapping("/user")
@@ -29,10 +27,12 @@ public class UserController {
 
     private static final Logger LOGGER = Logger.getLogger(UserController.class.getSimpleName());
     private UserService userService;
+    private TokenService tokenService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, TokenService tokenService) {
 	this.userService = userService;
+	this.tokenService = tokenService;
     }
 
     @PostMapping("/sign-up")
@@ -43,21 +43,22 @@ public class UserController {
 	    LOGGER.log(Level.WARNING, exception.toString(), exception);
 	    throw BadRequestException.entityExists(User.class);
 	}
-	return new LoginResponse(user.getUserRole().getRole(),
-		new TokenData("mock", "mock", System.currentTimeMillis() + 24 * 3600 * 1000));
+	Token accessToken = tokenService.createAccessToken(user.getName(), user.getUserRole().getRole());
+	Token refreshToken = tokenService.createRefreshToken(user.getName(), user.getUserRole().getRole());
+	return new LoginResponse(user.getUserRole().getRole(), accessToken, refreshToken);
     }
 
-    @GetMapping("/test")
-    public Response test() {
-	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	System.out.println("Username: " + authentication.getName());
-	if (authentication.getAuthorities().isEmpty()) {
-	    System.out.println("User does not have any authorithies!");
-	} else {
-	    for (GrantedAuthority authorithy : authentication.getAuthorities()) {
-		System.out.println("authorithy: " + authorithy.getAuthority());
+    @PostMapping("/token/refresh")
+    public Token refreshToken(@Valid @RequestBody Token refreshToken) {
+	try {
+	    Token accessToken = tokenService.createAccessToken(refreshToken.getValue());
+	    if (accessToken == null) {
+		throw BadRequestException.incorrectTokenException();
 	    }
+	    return accessToken;
+	} catch (UsernameNotFoundException | ExpiredJwtException exception) {
+	    LOGGER.log(Level.WARNING, exception.toString(), exception);
+	    throw new BadRequestException(exception.getMessage());
 	}
-	return new Response("dada");
     }
 }

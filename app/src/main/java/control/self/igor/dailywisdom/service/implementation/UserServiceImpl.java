@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.NoSuchElementException;
 
 import javax.persistence.EntityExistsException;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,6 +18,8 @@ import control.self.igor.dailywisdom.repository.abstraction.UserRepository;
 import control.self.igor.dailywisdom.service.abstraction.UserService;
 
 @Service
+@Transactional
+// TODO user exists?
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;

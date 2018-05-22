@@ -20,4 +20,8 @@ public class BadRequestException extends RuntimeException {
 	return new BadRequestException(clazz.getSimpleName() + " already exists.");
     }
 
+    public static BadRequestException incorrectTokenException() {
+	return new BadRequestException("Given token is incorrect");
+    }
+
 }

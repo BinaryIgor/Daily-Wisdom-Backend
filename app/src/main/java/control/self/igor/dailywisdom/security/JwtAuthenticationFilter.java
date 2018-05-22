@@ -2,7 +2,6 @@ package control.self.igor.dailywisdom.security;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.servlet.FilterChain;
@@ -19,12 +18,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import control.self.igor.dailywisdom.entity.User;
 import control.self.igor.dailywisdom.model.authorization.LoginResponse;
-import control.self.igor.dailywisdom.model.authorization.TokenData;
+import control.self.igor.dailywisdom.model.authorization.Token;
 import control.self.igor.dailywisdom.service.abstraction.JsonService;
 import control.self.igor.dailywisdom.service.abstraction.StreamService;
+import control.self.igor.dailywisdom.service.abstraction.TokenService;
 import control.self.igor.dailywisdom.service.abstraction.UserService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -32,14 +30,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private AuthenticationManager authenticationManager;
     private UserService userService;
     private JsonService jsonService;
+    private TokenService tokenService;
     private StreamService streamService;
 
     @Autowired
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserService userService,
-	    JsonService jsonService, StreamService streamService) {
+	    JsonService jsonService, TokenService tokenService, StreamService streamService) {
 	this.authenticationManager = authenticationManager;
 	this.userService = userService;
 	this.jsonService = jsonService;
+	this.tokenService = tokenService;
 	this.streamService = streamService;
 	setFilterProcessesUrl(SecurityConstants.LOGIN_URL);
     }
@@ -60,7 +60,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	}
     }
 
-    // TODO refresh token
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 	    Authentication authentication) throws IOException {
@@ -69,11 +68,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	String role = ((org.springframework.security.core.userdetails.User) authentication.getPrincipal())
 		.getAuthorities().iterator().next().getAuthority();
 	LOGGER.info("Injecting role...." + role);
-	long expirationDate = System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME;
-	String token = Jwts.builder().setSubject(username).claim(SecurityConstants.TOKEN_ROLE_CLAIM, role)
-		.setExpiration(new Date(expirationDate))
-		.signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes()).compact();
-	LoginResponse loginResponse = new LoginResponse(role, new TokenData(token, token, expirationDate));
+	Token accessToken = tokenService.createAccessToken(username, role);
+	Token refreshToken = tokenService.createRefreshToken(username, role);
+	LoginResponse loginResponse = new LoginResponse(role, accessToken, refreshToken);
 	streamService.writeBytesToOutputStream(response.getOutputStream(),
 		jsonService.serialize(loginResponse).getBytes());
     }
