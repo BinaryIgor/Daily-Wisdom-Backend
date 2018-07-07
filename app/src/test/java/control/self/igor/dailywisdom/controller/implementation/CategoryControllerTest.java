@@ -2,30 +2,36 @@ package control.self.igor.dailywisdom.controller.implementation;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import control.self.igor.dailywisdom.controller.abstraction.AbstractCrudAndSearchControllerTest;
-import control.self.igor.dailywisdom.controller.frontend.implementation.CategoryController;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import control.self.igor.dailywisdom.controller.abstraction.CrudAndSearchControllerTest;
+import control.self.igor.dailywisdom.controller.frontend.data.CategoryController;
 import control.self.igor.dailywisdom.entity.Category;
-import control.self.igor.dailywisdom.model.search.SearchByNameCriteria;
-import control.self.igor.dailywisdom.service.abstraction.ImageService;
-import control.self.igor.dailywisdom.service.abstraction.JsonService;
-import control.self.igor.dailywisdom.service.abstraction.ValidationService;
-import control.self.igor.dailywisdom.service.implementation.CategoryCrudService;
-import control.self.igor.dailywisdom.service.implementation.CategorySearchService;
-import control.self.igor.dailywisdom.service.implementation.ImageServiceImpl;
-import control.self.igor.dailywisdom.service.implementation.JsonServiceImpl;
-import control.self.igor.dailywisdom.service.implementation.ValidationServiceImpl;
+import control.self.igor.dailywisdom.model.SearchByNameCriteria;
+import control.self.igor.dailywisdom.service.crud.CategoryCrudService;
+import control.self.igor.dailywisdom.service.image.ImageService;
+import control.self.igor.dailywisdom.service.image.ImageServiceImpl;
+import control.self.igor.dailywisdom.service.json.JsonService;
+import control.self.igor.dailywisdom.service.json.JsonServiceImpl;
+import control.self.igor.dailywisdom.service.search.CategorySearchService;
+import control.self.igor.dailywisdom.service.validation.ValidationService;
+import control.self.igor.dailywisdom.service.validation.ValidationServiceImpl;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CategoryController.class)
-public class CategoryControllerTest extends AbstractCrudAndSearchControllerTest<Category, SearchByNameCriteria> {
+public class CategoryControllerTest extends CrudAndSearchControllerTest<Category, SearchByNameCriteria> {
 
     @TestConfiguration
     static class CategoryControllerTestConfiguration {
+
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Bean
 	public CategoryCrudService crudService() {
@@ -49,7 +55,7 @@ public class CategoryControllerTest extends AbstractCrudAndSearchControllerTest<
 
 	@Bean
 	public JsonService jsonService() {
-	    return new JsonServiceImpl();
+	    return new JsonServiceImpl(objectMapper);
 	}
 
     }

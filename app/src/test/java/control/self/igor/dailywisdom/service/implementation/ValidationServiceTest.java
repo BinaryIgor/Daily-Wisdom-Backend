@@ -10,7 +10,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import control.self.igor.dailywisdom.service.abstraction.ValidationService;
+import control.self.igor.dailywisdom.service.validation.ValidationService;
+import control.self.igor.dailywisdom.service.validation.ValidationServiceImpl;
 
 @RunWith(SpringRunner.class)
 public class ValidationServiceTest {

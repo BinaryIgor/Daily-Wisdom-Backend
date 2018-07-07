@@ -18,6 +18,7 @@ import control.self.igor.dailywisdom.entity.Author;
 import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.entity.QuoteOwner;
+import control.self.igor.dailywisdom.service.crud.EntityQuoteCrudService;
 import control.self.igor.dailywisdom.util.DataTestUtil;
 
 @Transactional
@@ -30,7 +31,7 @@ public abstract class AbstractEntityQuoteCrudServiceTest<Entity extends QuoteOwn
     protected TestEntityManager entityManager;
 
     @Autowired
-    protected AbstractEntityQuoteCrudService<Entity> crudService;
+    protected EntityQuoteCrudService<Entity> crudService;
 
     public AbstractEntityQuoteCrudServiceTest(Class<Entity> entityClazz) {
 	this.entityClazz = entityClazz;

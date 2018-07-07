@@ -9,10 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import control.self.igor.dailywisdom.service.abstraction.JsonService;
-import control.self.igor.dailywisdom.service.abstraction.StreamService;
-import control.self.igor.dailywisdom.service.abstraction.TokenService;
-import control.self.igor.dailywisdom.service.abstraction.UserService;
+import control.self.igor.dailywisdom.service.json.JsonService;
+import control.self.igor.dailywisdom.service.stream.StreamService;
+import control.self.igor.dailywisdom.service.user.TokenService;
+import control.self.igor.dailywisdom.service.user.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -48,16 +48,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
 	builder.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
     }
-
-    // @Bean
-    // CorsConfigurationSource corsConfigurationSource() {
-    // CorsConfiguration configuration = new CorsConfiguration();
-    // configuration.setAllowedOrigins(Arrays.asList("*"));
-    // configuration.setAllowedHeaders(Arrays.asList("*"));
-    // configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
-    // UrlBasedCorsConfigurationSource source = new
-    // UrlBasedCorsConfigurationSource();
-    // source.registerCorsConfiguration("/**", configuration);
-    // return source;
-    // }
 }

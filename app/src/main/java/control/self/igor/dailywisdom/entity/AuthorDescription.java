@@ -18,12 +18,13 @@ import control.self.igor.dailywisdom.json.View;
 
 @Entity
 @Table(name = "author_description")
-@JsonIgnoreProperties(value = { "id", "author" })
+@JsonIgnoreProperties(value = { "author" })
 public class AuthorDescription implements Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonView(View.AuthorDetails.class)
     private long id;
 
     @OneToOne
@@ -31,7 +32,7 @@ public class AuthorDescription implements Identifiable {
     private Author author;
 
     @NotNull(message = "is required")
-    @Size(min = 10, message = "description has to have at least 10 characters!")
+    @Size(min = 10, message = "description has to have at least 10 characters")
     @Column(name = "description")
     @JsonView(View.AuthorDetails.class)
     private String description;

@@ -14,22 +14,27 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 import control.self.igor.dailywisdom.entity.Author;
 import control.self.igor.dailywisdom.entity.Category;
+import control.self.igor.dailywisdom.exception.BadRequestException;
 import control.self.igor.dailywisdom.exception.NotFoundException;
 import control.self.igor.dailywisdom.json.View;
-import control.self.igor.dailywisdom.service.abstraction.AbstractAuthorCrudService;
-import control.self.igor.dailywisdom.service.abstraction.AbstractCrudService;
+import control.self.igor.dailywisdom.service.crud.AbstractAuthorCrudService;
+import control.self.igor.dailywisdom.service.crud.CrudService;
+import control.self.igor.dailywisdom.service.image.ImageService;
 
 @RestController
 @RequestMapping("/data")
 public class DataController {
 
     private AbstractAuthorCrudService authorService;
-    private AbstractCrudService<Category> categoryService;
+    private CrudService<Category> categoryService;
+    private ImageService imageService;
 
     @Autowired
-    public DataController(AbstractAuthorCrudService authorService, AbstractCrudService<Category> categoryService) {
+    public DataController(AbstractAuthorCrudService authorService, CrudService<Category> categoryService,
+	    ImageService imageService) {
 	this.authorService = authorService;
 	this.categoryService = categoryService;
+	this.imageService = imageService;
     }
 
     @GetMapping("/categories")
@@ -48,12 +53,18 @@ public class DataController {
     @JsonView(View.AuthorDetails.class)
     public Author getAuthor(@PathVariable("id") long id) {
 	return authorService.getEntity(id);
-
     }
 
     @GetMapping("/author/{id}/image")
-    public ResponseEntity<byte[]> getAuthorPicture(@PathVariable("id") long id) {
-	byte[] authorImage = null;// authorService.getAuthorImage(id);
+    public ResponseEntity<byte[]> getAuthorImage(@PathVariable("id") long id) {
+	if (id < 0) {
+	    throw new BadRequestException();
+	}
+	String authorImagePath = authorService.getImagePath(id);
+	if (authorImagePath == null || authorImagePath.isEmpty()) {
+	    throw new NotFoundException();
+	}
+	byte[] authorImage = imageService.getImageBytes(authorImagePath);
 	if (authorImage == null || authorImage.length < 1) {
 	    throw new NotFoundException();
 	}

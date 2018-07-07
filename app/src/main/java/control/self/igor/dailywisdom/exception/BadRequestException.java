@@ -16,11 +16,15 @@ public class BadRequestException extends RuntimeException {
 	super(message);
     }
 
-    public static <T> BadRequestException entityExists(Class<T> clazz) {
+    public static <T> BadRequestException createEntityExistsException(Class<T> clazz) {
 	return new BadRequestException(clazz.getSimpleName() + " already exists.");
     }
 
-    public static BadRequestException incorrectTokenException() {
+    public static <T> BadRequestException createEntityNotUniqueException(Class<T> clazz) {
+	return new BadRequestException(clazz.getSimpleName() + " is not unique.");
+    }
+
+    public static BadRequestException createIncorrectTokenException() {
 	return new BadRequestException("Given token is incorrect");
     }
 

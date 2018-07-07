@@ -2,37 +2,43 @@ package control.self.igor.dailywisdom.controller.implementation;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import control.self.igor.dailywisdom.controller.abstraction.AbstractEntityQuoteCrudControllerTest;
-import control.self.igor.dailywisdom.controller.frontend.implementation.AuthorQuoteController;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import control.self.igor.dailywisdom.controller.abstraction.EntityQuoteCrudControllerTest;
+import control.self.igor.dailywisdom.controller.frontend.data.AuthorQuoteController;
 import control.self.igor.dailywisdom.entity.Author;
-import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteCrudService;
-import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteSearchService;
-import control.self.igor.dailywisdom.service.abstraction.JsonService;
-import control.self.igor.dailywisdom.service.abstraction.ValidationService;
-import control.self.igor.dailywisdom.service.implementation.AuthorQuoteCrudService;
-import control.self.igor.dailywisdom.service.implementation.AuthorQuoteSearchService;
-import control.self.igor.dailywisdom.service.implementation.JsonServiceImpl;
-import control.self.igor.dailywisdom.service.implementation.ValidationServiceImpl;
+import control.self.igor.dailywisdom.service.crud.AuthorQuoteCrudService;
+import control.self.igor.dailywisdom.service.crud.EntityQuoteCrudService;
+import control.self.igor.dailywisdom.service.json.JsonService;
+import control.self.igor.dailywisdom.service.json.JsonServiceImpl;
+import control.self.igor.dailywisdom.service.search.AuthorQuoteSearchService;
+import control.self.igor.dailywisdom.service.search.EntityQuoteSearchService;
+import control.self.igor.dailywisdom.service.validation.ValidationService;
+import control.self.igor.dailywisdom.service.validation.ValidationServiceImpl;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AuthorQuoteController.class)
-public class AuthorQuoteControllerTest extends AbstractEntityQuoteCrudControllerTest<Author> {
+public class AuthorQuoteControllerTest extends EntityQuoteCrudControllerTest<Author> {
 
     @TestConfiguration
     static class AuthorControllerTestConfiguration {
 
+	@Autowired
+	private ObjectMapper objectMapper;
+
 	@Bean
-	public AbstractEntityQuoteCrudService<Author> crudService() {
+	public EntityQuoteCrudService<Author> crudService() {
 	    return Mockito.mock(AuthorQuoteCrudService.class);
 	}
 
 	@Bean
-	public AbstractEntityQuoteSearchService<Author> searchService() {
+	public EntityQuoteSearchService<Author> searchService() {
 	    return Mockito.mock(AuthorQuoteSearchService.class);
 	}
 
@@ -43,8 +49,9 @@ public class AuthorQuoteControllerTest extends AbstractEntityQuoteCrudController
 
 	@Bean
 	public JsonService jsonService() {
-	    return new JsonServiceImpl();
+	    return new JsonServiceImpl(objectMapper);
 	}
+
     }
 
     public AuthorQuoteControllerTest() {

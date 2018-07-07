@@ -15,10 +15,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import control.self.igor.dailywisdom.entity.Author;
 import control.self.igor.dailywisdom.entity.AuthorDescription;
-import control.self.igor.dailywisdom.repository.abstraction.AuthorDescriptionRepository;
-import control.self.igor.dailywisdom.repository.abstraction.AuthorRepository;
-import control.self.igor.dailywisdom.service.abstraction.AbstractCrudService;
+import control.self.igor.dailywisdom.repository.AuthorDescriptionRepository;
+import control.self.igor.dailywisdom.repository.AuthorRepository;
 import control.self.igor.dailywisdom.service.abstraction.AbstractCrudServiceTest;
+import control.self.igor.dailywisdom.service.crud.CrudService;
+import control.self.igor.dailywisdom.service.crud.AuthorCrudService;
 import control.self.igor.dailywisdom.util.DataTestUtil;
 import control.self.igor.dailywisdom.util.MockUtil;
 
@@ -36,7 +37,7 @@ public class AuthorCrudServiceTest extends AbstractCrudServiceTest<Author> {
 	private AuthorDescriptionRepository authorDescriptionRepository;
 
 	@Bean
-	public AbstractCrudService<Author> crudService() {
+	public CrudService<Author> crudService() {
 	    return new AuthorCrudService(authorRepository, authorDescriptionRepository);
 	}
 

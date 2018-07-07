@@ -1,7 +1,6 @@
 package control.self.igor.dailywisdom.service.implementation;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.NoSuchElementException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,12 +9,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import control.self.igor.dailywisdom.entity.User;
 import control.self.igor.dailywisdom.entity.UserRole;
-import control.self.igor.dailywisdom.repository.abstraction.UserRepository;
-import control.self.igor.dailywisdom.service.abstraction.UserService;
+import control.self.igor.dailywisdom.repository.UserRepository;
+import control.self.igor.dailywisdom.service.user.UserService;
+import control.self.igor.dailywisdom.service.user.UserServiceImpl;
 import control.self.igor.dailywisdom.util.MockUtil;
 
 @RunWith(SpringRunner.class)
@@ -28,9 +29,12 @@ public class UserServiceTest {
 	@Autowired
 	public UserRepository repository;
 
+	@Autowired
+	public BCryptPasswordEncoder bCryptPasswordEncoder;
+
 	@Bean
 	public UserService userService() {
-	    return new UserServiceImpl(repository);
+	    return new UserServiceImpl(repository, bCryptPasswordEncoder);
 	}
     }
 
@@ -40,12 +44,12 @@ public class UserServiceTest {
     @Autowired
     public UserService userService;
 
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void authenticateUserTest() {
 	String role = UserRole.Role.ADMIN.getTranslation();
-	User user = entityManager.persist(MockUtil.createUser(role));
-	assertTrue(userService.authenticate(user));
-	assertFalse(userService.authenticate(MockUtil.createDifferentUser(user)));
+	User user = entityManager.persist(MockUtil.createGuestUser());
+	userService.authenticate(user);
+	userService.authenticate(MockUtil.createDifferentUser(user));
     }
 
 }

@@ -36,22 +36,10 @@ public class DailyWisdomBackendApplication {
 	    public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedHeaders("Content-Type", "X-Requested-With", "accept", "Origin", "Authorization",
-				"Access-Control-Request-Method", "Access-Control-Request-Headers")
+				"Cache-Control", "Access-Control-Request-Method", "Access-Control-Request-Headers")
 			.exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
 			.allowedMethods("GET", "POST", "PUT", "DELETE");
 	    }
 	};
     }
-
-    // @Bean
-    // public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
-    // return args -> {
-    // System.out.println("Let's inspect the beans provided by Spring Boot:");
-    // String[] beanNames = ctx.getBeanDefinitionNames();
-    // Arrays.sort(beanNames);
-    // for (String beanName : beanNames) {
-    // System.out.println(beanName);
-    // }
-    // };
-    // }
 }

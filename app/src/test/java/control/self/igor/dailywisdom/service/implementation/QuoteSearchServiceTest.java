@@ -8,10 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import control.self.igor.dailywisdom.entity.Quote;
-import control.self.igor.dailywisdom.model.search.QuoteSearchCriteria;
-import control.self.igor.dailywisdom.repository.abstraction.QuoteRepository;
+import control.self.igor.dailywisdom.model.QuoteSearchCriteria;
+import control.self.igor.dailywisdom.repository.QuoteRepository;
 import control.self.igor.dailywisdom.service.abstraction.AbstractSearchServiceTest;
-import control.self.igor.dailywisdom.service.abstraction.SearchService;
+import control.self.igor.dailywisdom.service.search.QuoteSearchService;
+import control.self.igor.dailywisdom.service.search.SearchService;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest

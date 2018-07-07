@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -24,25 +25,30 @@ import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequ
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
-import control.self.igor.dailywisdom.controller.abstraction.AbstractCrudAndSearchControllerTest;
-import control.self.igor.dailywisdom.controller.frontend.implementation.AuthorController;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import control.self.igor.dailywisdom.controller.abstraction.CrudAndSearchControllerTest;
+import control.self.igor.dailywisdom.controller.frontend.data.AuthorController;
 import control.self.igor.dailywisdom.entity.Author;
-import control.self.igor.dailywisdom.model.search.SearchByNameCriteria;
-import control.self.igor.dailywisdom.service.abstraction.AbstractAuthorCrudService;
-import control.self.igor.dailywisdom.service.abstraction.ImageService;
-import control.self.igor.dailywisdom.service.abstraction.JsonService;
-import control.self.igor.dailywisdom.service.abstraction.ValidationService;
-import control.self.igor.dailywisdom.service.implementation.AuthorSearchService;
-import control.self.igor.dailywisdom.service.implementation.JsonServiceImpl;
-import control.self.igor.dailywisdom.service.implementation.ValidationServiceImpl;
+import control.self.igor.dailywisdom.model.SearchByNameCriteria;
+import control.self.igor.dailywisdom.service.crud.AbstractAuthorCrudService;
+import control.self.igor.dailywisdom.service.image.ImageService;
+import control.self.igor.dailywisdom.service.json.JsonService;
+import control.self.igor.dailywisdom.service.json.JsonServiceImpl;
+import control.self.igor.dailywisdom.service.search.AuthorSearchService;
+import control.self.igor.dailywisdom.service.validation.ValidationService;
+import control.self.igor.dailywisdom.service.validation.ValidationServiceImpl;
 import control.self.igor.dailywisdom.util.MockUtil;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AuthorController.class)
-public class AuthorControllerTest extends AbstractCrudAndSearchControllerTest<Author, SearchByNameCriteria> {
+public class AuthorControllerTest extends CrudAndSearchControllerTest<Author, SearchByNameCriteria> {
 
     @TestConfiguration
     static class AuthorControllerTestConfiguration {
+
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Bean
 	public AbstractAuthorCrudService crudService() {
@@ -66,13 +72,9 @@ public class AuthorControllerTest extends AbstractCrudAndSearchControllerTest<Au
 
 	@Bean
 	public JsonService jsonService() {
-	    return new JsonServiceImpl();
+	    return new JsonServiceImpl(objectMapper);
 	}
-
     }
-
-    @Autowired
-    private AbstractAuthorCrudService crudService;
 
     @Autowired
     private ImageService imageService;
@@ -85,7 +87,8 @@ public class AuthorControllerTest extends AbstractCrudAndSearchControllerTest<Au
     @Test
     public void getExistingAuthorImageTest() throws Exception {
 	byte[] mockImage = MockUtil.createImage();
-	when(crudService.getImagePath(ArgumentMatchers.any(Long.class))).thenReturn("/storage/tmp/1.jpg");
+	when(getAuthorCrudService().getImagePath(ArgumentMatchers.any(Long.class)))
+		.thenReturn("/storage/test/test.jpg");
 	when(imageService.getImageBytes(ArgumentMatchers.any(String.class))).thenReturn(mockImage);
 	String url = baseUrl + "/1/image";
 	byte[] returnedImage = mockMvc.perform(get(url)).andExpect(status().isOk()).andReturn().getResponse()
@@ -95,7 +98,7 @@ public class AuthorControllerTest extends AbstractCrudAndSearchControllerTest<Au
 
     @Test
     public void getNonExistingAuthorImageTest() throws Exception {
-	when(crudService.getImagePath(ArgumentMatchers.any(Long.class))).thenReturn(null);
+	when(getAuthorCrudService().getImagePath(ArgumentMatchers.any(Long.class))).thenReturn(null);
 	String url = baseUrl + "/1/image";
 	mockMvc.perform(get(url)).andExpect(status().isNotFound());
     }
@@ -111,16 +114,16 @@ public class AuthorControllerTest extends AbstractCrudAndSearchControllerTest<Au
 	when(imageService.createImageFileFromBytes(ArgumentMatchers.any(String.class),
 		ArgumentMatchers.any(byte[].class))).thenReturn(fileMock);
 	when(crudService.updateEntity(ArgumentMatchers.any(Author.class))).thenReturn(true);
+	when(getAuthorCrudService().saveImagePath(ArgumentMatchers.any(Long.class), ArgumentMatchers.any(String.class)))
+		.thenReturn(true);
 	String url = baseUrl + "/1/image";
-	mockMvc.perform(mockPutImageRequest(url).file(new MockMultipartFile("image", imageMock)))
-		.andExpect(status().isOk());
+	mockMvc.perform(mockPutImageRequest(url)).andExpect(status().isOk());
     }
 
     @Test
     public void putNonExistingAuthorImageTest() throws Exception {
-	byte[] imageMock = MockUtil.createImage();
 	String url = baseUrl + "/-1/image";
-	RequestBuilder builder = mockPutImageRequest(url).file(new MockMultipartFile("image", imageMock));
+	RequestBuilder builder = mockPutImageRequest(url);
 	mockMvc.perform(builder).andExpect(status().isBadRequest());
 	url = baseUrl + "/1/image";
 	when(crudService.getEntity(ArgumentMatchers.any(Long.class))).thenReturn(null);
@@ -129,11 +132,18 @@ public class AuthorControllerTest extends AbstractCrudAndSearchControllerTest<Au
 
     private MockMultipartHttpServletRequestBuilder mockPutImageRequest(String url) {
 	MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(url);
+	byte[] imageMock = MockUtil.createImage();
+	builder.file(new MockMultipartFile("image", imageMock));
+	builder.contentType(MediaType.MULTIPART_FORM_DATA);
 	builder.with(request -> {
 	    request.setMethod(HttpMethod.PUT.toString());
 	    return request;
 	});
 	return builder;
+    }
+
+    private AbstractAuthorCrudService getAuthorCrudService() {
+	return (AbstractAuthorCrudService) crudService;
     }
 
 }

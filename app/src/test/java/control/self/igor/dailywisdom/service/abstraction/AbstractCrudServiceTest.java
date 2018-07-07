@@ -18,6 +18,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.entity.Quote;
+import control.self.igor.dailywisdom.service.crud.CrudService;
 import control.self.igor.dailywisdom.util.DataTestUtil;
 
 @Transactional
@@ -30,7 +31,7 @@ public abstract class AbstractCrudServiceTest<Entity extends Identifiable> {
     protected TestEntityManager entityManager;
 
     @Autowired
-    protected AbstractCrudService<Entity> crudService;
+    protected CrudService<Entity> crudService;
 
     public AbstractCrudServiceTest(Class<Entity> entityClazz) {
 	this.entityClazz = entityClazz;

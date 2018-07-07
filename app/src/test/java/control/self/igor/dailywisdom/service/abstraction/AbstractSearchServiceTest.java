@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import control.self.igor.dailywisdom.entity.Identifiable;
+import control.self.igor.dailywisdom.service.search.SearchService;
 import control.self.igor.dailywisdom.util.DataTestUtil;
 
 @Transactional
@@ -37,6 +38,7 @@ public abstract class AbstractSearchServiceTest<Entity extends Identifiable, Sea
 		false);
 	List<Entity> searchResults = searchService.searchEntities(1, entities.size(), searchCriteria);
 	assertTrue(searchResults != null && !searchResults.isEmpty());
+	System.out.println("Search criteria = " + searchCriteria);
 	searchCriteria = DataTestUtil.createSearchCriteria(searchCriteriaClazz, entityClazz, entities, true);
 	searchResults = searchService.searchEntities(1, entities.size(), searchCriteria);
 	assertTrue(searchResults == null || searchResults.isEmpty());

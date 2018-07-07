@@ -80,9 +80,4 @@ public class User implements Identifiable {
 	this.userRole = userRole;
     }
 
-    @Override
-    public String toString() {
-	return "User [id=" + id + ", name=" + name + ", password=" + password + ", userRole=" + userRole + "]";
-    }
-
 }

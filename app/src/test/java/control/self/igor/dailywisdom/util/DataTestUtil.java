@@ -11,8 +11,8 @@ import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.entity.QuoteOwner;
-import control.self.igor.dailywisdom.model.search.QuoteSearchCriteria;
-import control.self.igor.dailywisdom.model.search.SearchByNameCriteria;
+import control.self.igor.dailywisdom.model.QuoteSearchCriteria;
+import control.self.igor.dailywisdom.model.SearchByNameCriteria;
 
 public class DataTestUtil {
 

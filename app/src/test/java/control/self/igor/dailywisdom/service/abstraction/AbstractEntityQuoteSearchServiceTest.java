@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.entity.QuoteOwner;
+import control.self.igor.dailywisdom.service.search.EntityQuoteSearchService;
 import control.self.igor.dailywisdom.util.DataTestUtil;
 
 @Transactional
@@ -26,7 +27,7 @@ public abstract class AbstractEntityQuoteSearchServiceTest<Entity extends QuoteO
     private TestEntityManager entityManager;
 
     @Autowired
-    private AbstractEntityQuoteSearchService<Entity> searchService;
+    private EntityQuoteSearchService<Entity> searchService;
 
     public AbstractEntityQuoteSearchServiceTest(Class<Entity> entityClazz) {
 	this.entityClazz = entityClazz;

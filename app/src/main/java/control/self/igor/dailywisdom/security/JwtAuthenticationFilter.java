@@ -17,12 +17,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import control.self.igor.dailywisdom.entity.User;
-import control.self.igor.dailywisdom.model.authorization.LoginResponse;
-import control.self.igor.dailywisdom.model.authorization.Token;
-import control.self.igor.dailywisdom.service.abstraction.JsonService;
-import control.self.igor.dailywisdom.service.abstraction.StreamService;
-import control.self.igor.dailywisdom.service.abstraction.TokenService;
-import control.self.igor.dailywisdom.service.abstraction.UserService;
+import control.self.igor.dailywisdom.model.LoginResponse;
+import control.self.igor.dailywisdom.model.Token;
+import control.self.igor.dailywisdom.service.json.JsonService;
+import control.self.igor.dailywisdom.service.stream.StreamService;
+import control.self.igor.dailywisdom.service.user.TokenService;
+import control.self.igor.dailywisdom.service.user.UserService;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -48,14 +48,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 	    throws AuthenticationException {
 	try {
-	    LOGGER.info("Authentication trial...");
 	    User user = jsonService.deserialize(request.getInputStream(), User.class);
 	    String role = userService.getUserRoleByName(user.getName());
-	    LOGGER.info("Have logged user = " + user.getName());
-	    LOGGER.info("With role = " + role);
 	    return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getName(),
 		    user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority(role))));
-	} catch (IOException exception) {
+	} catch (IOException | NullPointerException exception) {
+	    exception.printStackTrace();
 	    throw new RuntimeException(exception);
 	}
     }
@@ -67,7 +65,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		.getUsername();
 	String role = ((org.springframework.security.core.userdetails.User) authentication.getPrincipal())
 		.getAuthorities().iterator().next().getAuthority();
-	LOGGER.info("Injecting role...." + role);
+	LOGGER.info(username + " logged in as " + role);
 	Token accessToken = tokenService.createAccessToken(username, role);
 	Token refreshToken = tokenService.createRefreshToken(username, role);
 	LoginResponse loginResponse = new LoginResponse(role, accessToken, refreshToken);

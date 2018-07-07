@@ -1,6 +1,5 @@
 package control.self.igor.dailywisdom.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -125,19 +124,6 @@ public class Author implements QuoteOwner, Searchable {
 	} else {
 	    return false;
 	}
-    }
-
-    @Override
-    public String toString() {
-	return "Author [id=" + id + ", name=" + name + "]";
-    }
-
-    public static List<Long> getAuthorsIds(@NotNull List<Author> authors) {
-	List<Long> ids = new ArrayList<>();
-	for (Author author : authors) {
-	    ids.add(author.getId());
-	}
-	return ids;
     }
 
 }

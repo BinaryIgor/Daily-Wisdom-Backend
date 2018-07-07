@@ -4,7 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import control.self.igor.dailywisdom.entity.Author;
 import control.self.igor.dailywisdom.entity.AuthorDescription;
@@ -13,12 +18,18 @@ import control.self.igor.dailywisdom.entity.Identifiable;
 import control.self.igor.dailywisdom.entity.Quote;
 import control.self.igor.dailywisdom.entity.User;
 import control.self.igor.dailywisdom.entity.UserRole;
-import control.self.igor.dailywisdom.model.search.QuoteSearchCriteria;
-import control.self.igor.dailywisdom.model.search.SearchByNameCriteria;
+import control.self.igor.dailywisdom.entity.UserRole.Role;
+import control.self.igor.dailywisdom.model.QuoteSearchCriteria;
+import control.self.igor.dailywisdom.model.SearchByNameCriteria;
+import control.self.igor.dailywisdom.model.Token;
+import control.self.igor.dailywisdom.security.SecurityConstants;
+import control.self.igor.dailywisdom.security.SecurityConstants.TokenType;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 public class MockUtil {
 
-    private static final String IMAGE_PLACEHOLDER_FILE_PATH = "placeholder.jpg";
+    private static final String IMAGE_PLACEHOLDER_FILE_PATH = "image_placeholder.jpg";
     private static final String MOCKED_IMAGES_FILE_PATH = "storage/images";
 
     public static byte[] createImage() {
@@ -28,6 +39,7 @@ public class MockUtil {
 	    inputStream.read(imageBytes, 0, imageBytes.length);
 	    return imageBytes;
 	} catch (IOException exception) {
+	    exception.printStackTrace();
 	    return null;
 	}
     }
@@ -62,7 +74,7 @@ public class MockUtil {
 	List<Long> authorsIds = new ArrayList<>();
 	authorsIds.add(firstQuote.getAuthor().getId());
 	authorsIds.add(lastQuote.getAuthor().getId());
-	return new QuoteSearchCriteria(null, categoriesIds, authorsIds);
+	return new QuoteSearchCriteria(null, authorsIds, categoriesIds);
     }
 
     public static List<Quote> createQuotes(Author author, List<Category> existingCategories) {
@@ -141,12 +153,38 @@ public class MockUtil {
 	return new Category("Mock");
     }
 
-    public static User createUser(String role) {
-	return new User("abc", "abc", new UserRole(role));
+    public static User createGuestUser() {
+	return new User("abc", "abc", UserRole.createGuest());
+    }
+
+    public static User createAdminUser() {
+	return new User("abc", "abc", UserRole.createAdmin());
     }
 
     public static User createDifferentUser(User user) {
 	return new User(user.getName() + "ab", user.getPassword() + "ab", user.getUserRole());
+    }
+
+    public static UsernamePasswordAuthenticationToken mockAuthentication(UserRole.Role role) {
+	return new UsernamePasswordAuthenticationToken("super", null,
+		Collections.singletonList(new SimpleGrantedAuthority(role.getTranslation())));
+    }
+
+    public static Token mockAdminAccessToken(String username) {
+	return mockToken(TokenType.ACCESS_TOKEN, username, Role.ADMIN.getTranslation());
+    }
+
+    private static Token mockToken(TokenType tokenType, String username, String role) {
+	long expirationDate = System.currentTimeMillis();
+	if (TokenType.ACCESS_TOKEN == tokenType) {
+	    expirationDate += SecurityConstants.ACCES_TOKEN_EXPIRATION_TIME;
+	} else {
+	    expirationDate += SecurityConstants.REFRESH_TOKEN_EXPIRATION_TIME;
+	}
+	String token = Jwts.builder().setSubject(username).claim(SecurityConstants.TOKEN_ROLE_CLAIM, role)
+		.claim(SecurityConstants.TOKEN_TYPE_KEY, tokenType.getValue()).setExpiration(new Date(expirationDate))
+		.signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes()).compact();
+	return new Token(token, expirationDate);
     }
 
     public static List<TestComparable> createComparableList() {

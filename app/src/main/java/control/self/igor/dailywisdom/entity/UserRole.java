@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "user_role")
@@ -16,6 +18,8 @@ public class UserRole implements Identifiable {
     @Column(name = "id")
     private long id;
 
+    @NotNull(message = "User role must have at least 3 characters")
+    @Size(min = 3, message = "User role must have at least 3 characters")
     @Column(name = "role")
     private String role;
 
@@ -33,6 +37,10 @@ public class UserRole implements Identifiable {
 	    return translation;
 	}
 
+	public boolean equalsByTranslation(String role) {
+	    return translation.equals(role);
+	}
+
 	public static boolean isAdmin(String role) {
 	    return ADMIN.translation.equals(role);
 	}
@@ -44,6 +52,10 @@ public class UserRole implements Identifiable {
 
     public static UserRole createGuest() {
 	return new UserRole(Role.GUEST.translation);
+    }
+
+    public static UserRole createAdmin() {
+	return new UserRole(Role.ADMIN.translation);
     }
 
     private UserRole(String role) {

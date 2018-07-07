@@ -33,7 +33,7 @@ public class Quote implements Identifiable {
 
     @Column(name = "content")
     @NotNull
-    @Size(min = 10, message = "is required")
+    @Size(min = 10, message = "Quote has to have at least 10 characters")
     @JsonView(value = { View.List.class, View.AuthorDetails.class })
     private String content;
 

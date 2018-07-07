@@ -8,12 +8,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import control.self.igor.dailywisdom.entity.Category;
-import control.self.igor.dailywisdom.repository.abstraction.AuthorRepository;
-import control.self.igor.dailywisdom.repository.abstraction.CategoryRepository;
-import control.self.igor.dailywisdom.repository.abstraction.EntityQuoteRepository;
-import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteCrudService;
+import control.self.igor.dailywisdom.repository.AuthorRepository;
+import control.self.igor.dailywisdom.repository.CategoryRepository;
+import control.self.igor.dailywisdom.repository.EntityQuoteRepository;
 import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteCrudServiceTest;
-import control.self.igor.dailywisdom.service.abstraction.ComparatorService;
+import control.self.igor.dailywisdom.service.comparator.ComparatorService;
+import control.self.igor.dailywisdom.service.comparator.ComparatorServiceImpl;
+import control.self.igor.dailywisdom.service.crud.EntityQuoteCrudService;
+import control.self.igor.dailywisdom.service.crud.CategoryQuoteCrudService;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -37,7 +39,7 @@ public class CategoryQuoteCrudServiceTest extends AbstractEntityQuoteCrudService
 	}
 
 	@Bean
-	public AbstractEntityQuoteCrudService<Category> crudService() {
+	public EntityQuoteCrudService<Category> crudService() {
 	    return new CategoryQuoteCrudService(categoryRepository, authorRepository, entityQuoteRepository,
 		    comparatorService());
 	}

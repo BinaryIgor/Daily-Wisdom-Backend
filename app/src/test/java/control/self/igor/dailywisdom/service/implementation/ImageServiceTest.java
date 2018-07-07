@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import control.self.igor.dailywisdom.service.abstraction.ImageService;
+import control.self.igor.dailywisdom.service.image.ImageService;
 import control.self.igor.dailywisdom.util.MockUtil;
 import control.self.igor.dailywisdom.util.MultipartFileMock;
 
@@ -102,7 +102,7 @@ public class ImageServiceTest {
 	if (proper) {
 	    image = MockUtil.createImage();
 	}
-	String imageFileName = service.getImageFileNameWithFormat("tmp");
+	String imageFileName = service.getImageFileNameWithFormat("test");
 	return service.createImageFileFromBytes(imagesPath + "/" + imageFileName, image);
     }
 

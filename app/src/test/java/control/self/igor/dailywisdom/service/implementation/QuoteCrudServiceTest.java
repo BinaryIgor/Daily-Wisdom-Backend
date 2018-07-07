@@ -8,9 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import control.self.igor.dailywisdom.entity.Quote;
-import control.self.igor.dailywisdom.repository.abstraction.QuoteRepository;
-import control.self.igor.dailywisdom.service.abstraction.AbstractCrudService;
+import control.self.igor.dailywisdom.repository.QuoteRepository;
 import control.self.igor.dailywisdom.service.abstraction.AbstractCrudServiceTest;
+import control.self.igor.dailywisdom.service.crud.CrudService;
+import control.self.igor.dailywisdom.service.crud.QuoteCrudService;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -23,7 +24,7 @@ public class QuoteCrudServiceTest extends AbstractCrudServiceTest<Quote> {
 	private QuoteRepository quoteRepository;
 
 	@Bean
-	public AbstractCrudService<Quote> crudService() {
+	public CrudService<Quote> crudService() {
 	    return new QuoteCrudService(quoteRepository);
 	}
 

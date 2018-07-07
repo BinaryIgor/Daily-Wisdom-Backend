@@ -8,9 +8,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import control.self.igor.dailywisdom.entity.Category;
-import control.self.igor.dailywisdom.repository.abstraction.EntityQuoteRepository;
-import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteSearchService;
+import control.self.igor.dailywisdom.repository.EntityQuoteRepository;
 import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteSearchServiceTest;
+import control.self.igor.dailywisdom.service.search.EntityQuoteSearchService;
+import control.self.igor.dailywisdom.service.search.CategoryQuoteSearchService;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -23,7 +24,7 @@ public class CategoryQuoteSearchServiceTest extends AbstractEntityQuoteSearchSer
 	private EntityQuoteRepository entityQuoteRepository;
 
 	@Bean
-	public AbstractEntityQuoteSearchService<Category> searchService() {
+	public EntityQuoteSearchService<Category> searchService() {
 	    return new CategoryQuoteSearchService(entityQuoteRepository);
 	}
 
