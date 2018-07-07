@@ -54,11 +54,6 @@ public class CrudControllerTest<Entity extends Identifiable> {
     @Autowired
     protected JsonService jsonService;
 
-    public CrudControllerTest(String baseUrl, Class<Entity> entityClazz) {
-	this.baseUrl = baseUrl;
-	this.entityClazz = entityClazz;
-    }
-
     @Before
     public void setup() {
 	Authentication authentication = MockUtil.mockAuthentication(Role.ADMIN);

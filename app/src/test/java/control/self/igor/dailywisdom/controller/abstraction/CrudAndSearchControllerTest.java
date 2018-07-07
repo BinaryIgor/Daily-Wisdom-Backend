@@ -20,17 +20,10 @@ import control.self.igor.dailywisdom.util.TestUtil;
 public abstract class CrudAndSearchControllerTest<Entity extends Identifiable, SearchCriteria>
 	extends CrudControllerTest<Entity> {
 
-    private Class<SearchCriteria> searchCriteriaClazz;
-    private String searchUrl;
+    protected Class<SearchCriteria> searchCriteriaClazz;
+    protected String searchUrl;
     @Autowired
     private SearchService<Entity, SearchCriteria> searchService;
-
-    public CrudAndSearchControllerTest(String baseUrl, Class<Entity> entityClazz,
-	    Class<SearchCriteria> searchCriteriaClazz) {
-	super(baseUrl, entityClazz);
-	this.searchCriteriaClazz = searchCriteriaClazz;
-	this.searchUrl = baseUrl + "/search";
-    }
 
     @Test
     public void searchProperParamsTest() throws Exception {

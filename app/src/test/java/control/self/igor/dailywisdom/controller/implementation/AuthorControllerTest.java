@@ -14,6 +14,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -41,6 +42,7 @@ import control.self.igor.dailywisdom.service.validation.ValidationServiceImpl;
 import control.self.igor.dailywisdom.util.MockUtil;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest
 @WebMvcTest(AuthorController.class)
 public class AuthorControllerTest extends CrudAndSearchControllerTest<Author, SearchByNameCriteria> {
 
@@ -80,7 +82,10 @@ public class AuthorControllerTest extends CrudAndSearchControllerTest<Author, Se
     private ImageService imageService;
 
     public AuthorControllerTest() {
-	super("/author", Author.class, SearchByNameCriteria.class);
+	this.baseUrl = "/author";
+	this.searchUrl = baseUrl + "/search";
+	this.entityClazz = Author.class;
+	this.searchCriteriaClazz = SearchByNameCriteria.class;
 
     }
 

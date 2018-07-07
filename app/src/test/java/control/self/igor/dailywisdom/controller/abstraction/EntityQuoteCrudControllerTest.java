@@ -54,20 +54,15 @@ public class EntityQuoteCrudControllerTest<Entity extends QuoteOwner> {
     @Autowired
     protected JsonService jsonService;
 
-    public EntityQuoteCrudControllerTest(String baseUrl, Class<Entity> entityClazz) {
-	this.baseUrl = baseUrl;
-	this.entityClazz = entityClazz;
-    }
-
     @Before
-    public void setup() {
+    public void setUp() {
 	Authentication authentication = MockUtil.mockAuthentication(Role.ADMIN);
 	SecurityContextHolder.getContext().setAuthentication(authentication);
-	mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
 
     @Test
     public void getListProperParamsTest() throws Exception {
+	mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 	long entityId = 1;
 	String url = baseUrl + entityId + "/list";
 	List<Quote> quotes = DataTestUtil.createEntities(Quote.class);
@@ -83,6 +78,7 @@ public class EntityQuoteCrudControllerTest<Entity extends QuoteOwner> {
 
     @Test
     public void getListImproperParamsTest() throws Exception {
+	mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 	String url = TestUtil.createPageUrl(baseUrl + "/2/list", -1, 3);
 	mockMvc.perform(get(url)).andExpect(status().isBadRequest());
 	url = TestUtil.createPageUrl(baseUrl + "/1/list", -1, -3);
@@ -91,6 +87,7 @@ public class EntityQuoteCrudControllerTest<Entity extends QuoteOwner> {
 
     @Test
     public void countListTest() throws Exception {
+	mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 	String url = baseUrl + "/1/list/count";
 	List<Entity> entities = DataTestUtil.createEntities(entityClazz);
 	EntityCounter entityCounter = new EntityCounter(entities.size());
@@ -113,6 +110,7 @@ public class EntityQuoteCrudControllerTest<Entity extends QuoteOwner> {
     }
 
     private void getEntityQuoteTest(boolean entityExists) throws Exception {
+	mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 	long id = 1;
 	String url = baseUrl + "/" + id + "/" + id;
 	if (entityExists) {
@@ -136,6 +134,7 @@ public class EntityQuoteCrudControllerTest<Entity extends QuoteOwner> {
     }
 
     private void createQuoteTest(boolean proper) throws Exception {
+	mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 	Quote quote = DataTestUtil.createEntity(Quote.class, proper);
 	ResultMatcher matcher;
 	if (proper) {
@@ -168,6 +167,7 @@ public class EntityQuoteCrudControllerTest<Entity extends QuoteOwner> {
     }
 
     private void deleteEntityTest(boolean entityExists) throws Exception {
+	mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 	long id = 2;
 	ResultMatcher matcher;
 	if (entityExists) {
@@ -194,6 +194,7 @@ public class EntityQuoteCrudControllerTest<Entity extends QuoteOwner> {
     }
 
     private void updateTest(UpdateTestMode mode) throws Exception {
+	mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
 	Quote quote = DataTestUtil.createEntity(Quote.class, !UpdateTestMode.improperEntity.equals(mode));
 	long id = 2;
 	String url = baseUrl + "/" + id + "/" + id;

@@ -54,7 +54,8 @@ public class CategoryQuoteControllerTest extends EntityQuoteCrudControllerTest<C
     }
 
     public CategoryQuoteControllerTest() {
-	super("/category/quote/", Category.class);
+	this.baseUrl = "/category/quote/";
+	this.entityClazz = Category.class;
     }
 
 }

@@ -53,8 +53,10 @@ public class QuoteControllerTest extends CrudAndSearchControllerTest<Quote, Quot
     }
 
     public QuoteControllerTest() {
-	super("/quote", Quote.class, QuoteSearchCriteria.class);
-
+	this.baseUrl = "/quote";
+	this.searchUrl = baseUrl + "/search";
+	this.entityClazz = Quote.class;
+	this.searchCriteriaClazz = QuoteSearchCriteria.class;
     }
 
 }

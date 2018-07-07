@@ -55,7 +55,8 @@ public class AuthorQuoteControllerTest extends EntityQuoteCrudControllerTest<Aut
     }
 
     public AuthorQuoteControllerTest() {
-	super("/author/quote/", Author.class);
+	this.baseUrl = "/author/quote/";
+	this.entityClazz = Author.class;
     }
 
 }

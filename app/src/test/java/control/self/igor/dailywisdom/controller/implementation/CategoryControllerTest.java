@@ -61,7 +61,10 @@ public class CategoryControllerTest extends CrudAndSearchControllerTest<Category
     }
 
     public CategoryControllerTest() {
-	super("/category", Category.class, SearchByNameCriteria.class);
+	this.baseUrl = "/category";
+	this.searchUrl = baseUrl + "/search";
+	this.entityClazz = Category.class;
+	this.searchCriteriaClazz = SearchByNameCriteria.class;
 
     }
 
