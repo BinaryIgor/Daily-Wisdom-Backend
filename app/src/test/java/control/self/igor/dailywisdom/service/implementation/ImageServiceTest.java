@@ -27,15 +27,6 @@ import control.self.igor.dailywisdom.util.MultipartFileMock;
 @SpringBootTest
 public class ImageServiceTest {
 
-    // @TestConfiguration
-    // static class ImageServiceTestConfiguration {
-    //
-    // @Bean
-    // public ImageService service() {
-    // return new ImageServiceImpl();
-    // }
-    // }
-
     private static final int IMAGE_WIDTH = 512;
     private static final int IMAGE_HEIGHT = 256;
     @Value("${storageAuthorsImagesPath}")
