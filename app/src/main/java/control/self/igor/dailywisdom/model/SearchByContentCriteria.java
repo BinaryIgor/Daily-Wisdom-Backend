@@ -16,10 +16,4 @@ public class SearchByContentCriteria {
 	return content;
     }
 
-    @Override
-    public String toString() {
-	return "SearchByContentCriteria [content=" + content + ", getContent()=" + getContent() + ", getClass()="
-		+ getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
-    }
-
 }

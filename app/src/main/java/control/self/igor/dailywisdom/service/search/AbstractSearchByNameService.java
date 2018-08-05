@@ -14,8 +14,8 @@ public abstract class AbstractSearchByNameService<Entity extends Searchable> ext
 	implements SearchService<Entity, SearchByNameCriteria> {
 
     @Autowired
-    public AbstractSearchByNameService(JpaSpecificationExecutor<Entity> executor) {
-	super(executor);
+    public AbstractSearchByNameService(JpaSpecificationExecutor<Entity> executor, String toSortByColumnName) {
+	super(executor, toSortByColumnName);
     }
 
     @Override

@@ -11,7 +11,7 @@ public class CategorySearchService extends AbstractSearchByNameService<Category>
 
     @Autowired
     public CategorySearchService(CategoryRepository repository) {
-	super(repository);
+	super(repository, "name");
     }
 
 }

@@ -19,7 +19,7 @@ public class QuoteSearchService extends AbstractSearchService<Quote>
 
     @Autowired
     public QuoteSearchService(QuoteRepository repository) {
-	super(repository);
+	super(repository, "id");
     }
 
     @Override

@@ -2,7 +2,6 @@ package control.self.igor.dailywisdom.security;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +25,6 @@ import control.self.igor.dailywisdom.service.user.UserService;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private static final Logger LOGGER = Logger.getLogger(JwtAuthenticationFilter.class.getSimpleName());
     private AuthenticationManager authenticationManager;
     private UserService userService;
     private JsonService jsonService;
@@ -65,7 +63,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		.getUsername();
 	String role = ((org.springframework.security.core.userdetails.User) authentication.getPrincipal())
 		.getAuthorities().iterator().next().getAuthority();
-	LOGGER.info(username + " logged in as " + role);
 	Token accessToken = tokenService.createAccessToken(username, role);
 	Token refreshToken = tokenService.createRefreshToken(username, role);
 	LoginResponse loginResponse = new LoginResponse(role, accessToken, refreshToken);

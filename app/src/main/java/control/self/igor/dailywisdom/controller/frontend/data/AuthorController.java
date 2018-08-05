@@ -72,7 +72,6 @@ public class AuthorController extends CrudAndSearchController<Author, SearchByNa
     @GetMapping("/{id}/image")
     public ResponseEntity<byte[]> getAuthorImage(@PathVariable("id") long id) {
 	String authorImagePath = getAuthorService().getImagePath(id);
-	LOGGER.info("Have authorImagePath =" + authorImagePath);
 	if (authorImagePath == null || authorImagePath.isEmpty()) {
 	    throw new NotFoundException();
 	}
@@ -100,8 +99,7 @@ public class AuthorController extends CrudAndSearchController<Author, SearchByNa
 	    throw new InternalErrorException();
 	}
 	if (!getAuthorService().saveImagePath(id, authorImagePath)) {
-	    System.out.println("Can not save image path!");
-	    throw new WrongDataException();
+	    throw new WrongDataException("Can not save image path!");
 	}
 	return new Response(Response.OK);
     }

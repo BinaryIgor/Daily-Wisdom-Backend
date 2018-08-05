@@ -14,6 +14,6 @@ public class QuoteCrudService extends CrudService<Quote> {
 
     @Autowired
     public QuoteCrudService(QuoteRepository repository) {
-	super(repository);
+	super(repository, "id");
     }
 }

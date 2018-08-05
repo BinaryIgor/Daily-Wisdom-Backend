@@ -12,10 +12,8 @@ import control.self.igor.dailywisdom.repository.AuthorRepository;
 import control.self.igor.dailywisdom.repository.CategoryRepository;
 import control.self.igor.dailywisdom.repository.EntityQuoteRepository;
 import control.self.igor.dailywisdom.service.abstraction.AbstractEntityQuoteCrudServiceTest;
-import control.self.igor.dailywisdom.service.comparator.ComparatorService;
-import control.self.igor.dailywisdom.service.comparator.ComparatorServiceImpl;
-import control.self.igor.dailywisdom.service.crud.EntityQuoteCrudService;
 import control.self.igor.dailywisdom.service.crud.CategoryQuoteCrudService;
+import control.self.igor.dailywisdom.service.crud.EntityQuoteCrudService;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -34,14 +32,8 @@ public class CategoryQuoteCrudServiceTest extends AbstractEntityQuoteCrudService
 	private EntityQuoteRepository entityQuoteRepository;
 
 	@Bean
-	public ComparatorService comparatorService() {
-	    return new ComparatorServiceImpl();
-	}
-
-	@Bean
 	public EntityQuoteCrudService<Category> crudService() {
-	    return new CategoryQuoteCrudService(categoryRepository, authorRepository, entityQuoteRepository,
-		    comparatorService());
+	    return new CategoryQuoteCrudService(categoryRepository, authorRepository, entityQuoteRepository);
 	}
 
     }

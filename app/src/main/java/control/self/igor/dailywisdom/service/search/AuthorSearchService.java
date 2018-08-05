@@ -11,7 +11,7 @@ public class AuthorSearchService extends AbstractSearchByNameService<Author> {
 
     @Autowired
     public AuthorSearchService(AuthorRepository repository) {
-	super(repository);
+	super(repository, "name");
     }
 
 }

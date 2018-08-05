@@ -16,10 +16,4 @@ public class SearchByNameCriteria {
 	return name;
     }
 
-    @Override
-    public String toString() {
-	return "SearchByNameCriteria [name=" + name + ", getName()=" + getName() + ", getClass()=" + getClass()
-		+ ", hashCode()=" + hashCode() + ", toString()=" + super.toString() + "]";
-    }
-
 }

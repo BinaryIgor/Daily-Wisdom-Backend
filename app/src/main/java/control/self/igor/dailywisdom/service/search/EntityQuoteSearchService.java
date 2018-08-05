@@ -13,7 +13,7 @@ public abstract class EntityQuoteSearchService<Entity extends QuoteOwner> extend
     private Class<Entity> entityClazz;
 
     public EntityQuoteSearchService(Class<Entity> entityClazz, EntityQuoteRepository entityQuoteRepository) {
-	super(entityQuoteRepository);
+	super(entityQuoteRepository, "id");
 	this.entityClazz = entityClazz;
     }
 

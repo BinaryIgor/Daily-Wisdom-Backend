@@ -15,10 +15,12 @@ public abstract class CrudService<Entity extends Identifiable> {
 
     protected static final int DEFAULT_PAGE_SIZE = 50;
     protected static final Logger LOGGER = Logger.getLogger(CrudService.class.getSimpleName());
+    private String toSortByColumnName;
     protected PagingAndSortingRepository<Entity, Long> repository;
 
-    public CrudService(PagingAndSortingRepository<Entity, Long> repository) {
+    public CrudService(PagingAndSortingRepository<Entity, Long> repository, String toSortByColumnName) {
 	this.repository = repository;
+	this.toSortByColumnName = toSortByColumnName;
     }
 
     public List<Entity> getEntities() {
@@ -26,7 +28,7 @@ public abstract class CrudService<Entity extends Identifiable> {
     }
 
     public List<Entity> getEntities(Integer page, Integer size) {
-	Sort sort = new Sort(Direction.ASC, "id");
+	Sort sort = new Sort(Direction.ASC, toSortByColumnName);
 	if ((page == null || page < 1) && (size == null || size < 1)) {
 	    return (List<Entity>) repository.findAll(sort);
 	}

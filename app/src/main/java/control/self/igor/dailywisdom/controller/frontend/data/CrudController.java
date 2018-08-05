@@ -2,7 +2,6 @@ package control.self.igor.dailywisdom.controller.frontend.data;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.logging.Logger;
 
 import javax.validation.Valid;
 
@@ -32,8 +31,6 @@ import control.self.igor.dailywisdom.service.crud.CrudService;
 import control.self.igor.dailywisdom.service.validation.ValidationService;
 
 public abstract class CrudController<Entity extends Identifiable> {
-
-    public static final Logger LOGGER = Logger.getLogger(CrudController.class.getSimpleName());
 
     public CrudService<Entity> crudService;
     protected ValidationService validationService;

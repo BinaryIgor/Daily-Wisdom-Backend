@@ -14,13 +14,15 @@ public abstract class AbstractSearchService<Entity extends Identifiable> {
 
     private static final int DEFAULT_PAGE_SIZE = 50;
     private JpaSpecificationExecutor<Entity> executor;
+    private String toSortByColumnName;
 
-    public AbstractSearchService(JpaSpecificationExecutor<Entity> executor) {
+    public AbstractSearchService(JpaSpecificationExecutor<Entity> executor, String toSortByColumnName) {
 	this.executor = executor;
+	this.toSortByColumnName = toSortByColumnName;
     }
 
     public List<Entity> searchEntities(Integer page, Integer size, Specification<Entity> specification) {
-	Sort sort = new Sort(Direction.ASC, "id");
+	Sort sort = new Sort(Direction.ASC, toSortByColumnName);
 	if ((page == null || page < 1) && (size == null || size < 1)) {
 	    return executor.findAll(specification);
 	}

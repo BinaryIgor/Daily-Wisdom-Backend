@@ -2,7 +2,6 @@ package control.self.igor.dailywisdom.security;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -24,7 +23,6 @@ import io.jsonwebtoken.Jwts;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private static final Logger LOGGER = Logger.getLogger(JwtAuthorizationFilter.class.getSimpleName());
     private StreamService streamService;
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, StreamService streamService) {
@@ -36,7 +34,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 	    throws IOException, ServletException {
-	LOGGER.info("Filtering...");
 	String authorizationHeader = request.getHeader(SecurityConstants.AUTHORIZATION_HEADER);
 	if (authorizationHeader == null || authorizationHeader.isEmpty()) {
 	    chain.doFilter(request, response);

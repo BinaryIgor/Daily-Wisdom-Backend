@@ -9,7 +9,6 @@ import control.self.igor.dailywisdom.entity.Category;
 import control.self.igor.dailywisdom.repository.AuthorRepository;
 import control.self.igor.dailywisdom.repository.CategoryRepository;
 import control.self.igor.dailywisdom.repository.EntityQuoteRepository;
-import control.self.igor.dailywisdom.service.comparator.ComparatorService;
 
 @Service
 @Transactional
@@ -17,7 +16,7 @@ public class CategoryQuoteCrudService extends EntityQuoteCrudService<Category> {
 
     @Autowired
     public CategoryQuoteCrudService(CategoryRepository categoryRepository, AuthorRepository authorRepository,
-	    EntityQuoteRepository entityQuoteRepository, ComparatorService comparatorService) {
+	    EntityQuoteRepository entityQuoteRepository) {
 	super(Category.class, authorRepository, categoryRepository, entityQuoteRepository);
     }
 

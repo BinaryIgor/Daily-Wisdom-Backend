@@ -10,7 +10,7 @@ public abstract class AbstractAuthorCrudService extends CrudService<Author> {
 
     @Autowired
     public AbstractAuthorCrudService(AuthorRepository repository) {
-	super(repository);
+	super(repository, "name");
     }
 
     public abstract AuthorDescription getAuthorDescription(long id);

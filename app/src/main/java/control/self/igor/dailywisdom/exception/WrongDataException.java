@@ -6,4 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
 public class WrongDataException extends RuntimeException {
 
+    public WrongDataException(String message) {
+	super(message);
+    }
+
+    public WrongDataException() {
+
+    }
 }

@@ -14,6 +14,6 @@ public class CategoryCrudService extends CrudService<Category> {
 
     @Autowired
     public CategoryCrudService(CategoryRepository repository) {
-	super(repository);
+	super(repository, "name");
     }
 }

@@ -54,8 +54,6 @@ public class TokenServiceImpl implements TokenService {
 	String username = claims.getSubject();
 	String role = claims.get(SecurityConstants.TOKEN_ROLE_CLAIM, String.class);
 	String tokenType = claims.get(SecurityConstants.TOKEN_TYPE_KEY, String.class);
-	System.out.println("TokenServiceImpl.createAccessToken()");
-	System.out.println("TokenType:" + tokenType);
 	if (username == null || tokenType == null || TokenType.isAccessToken(tokenType)) {
 	    return null;
 	}
