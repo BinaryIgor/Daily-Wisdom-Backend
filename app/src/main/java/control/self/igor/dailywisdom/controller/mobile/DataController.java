@@ -2,7 +2,6 @@ package control.self.igor.dailywisdom.controller.mobile;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +28,6 @@ public class DataController {
     private CrudService<Category> categoryService;
     private ImageService imageService;
 
-    @Autowired
     public DataController(AbstractAuthorCrudService authorService, CrudService<Category> categoryService,
 	    ImageService imageService) {
 	this.authorService = authorService;

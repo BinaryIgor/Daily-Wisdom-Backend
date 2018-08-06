@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -15,7 +14,6 @@ public class JsonServiceImpl implements JsonService {
 
     private ObjectMapper objectMapper;
 
-    @Autowired
     public JsonServiceImpl(ObjectMapper objectMapper) {
 	this.objectMapper = objectMapper;
     }

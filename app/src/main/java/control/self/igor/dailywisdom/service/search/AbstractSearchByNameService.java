@@ -3,7 +3,6 @@ package control.self.igor.dailywisdom.service.search;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import control.self.igor.dailywisdom.entity.Searchable;
@@ -13,7 +12,6 @@ import control.self.igor.dailywisdom.specification.SpecificationFactory;
 public abstract class AbstractSearchByNameService<Entity extends Searchable> extends AbstractSearchService<Entity>
 	implements SearchService<Entity, SearchByNameCriteria> {
 
-    @Autowired
     public AbstractSearchByNameService(JpaSpecificationExecutor<Entity> executor, String toSortByColumnName) {
 	super(executor, toSortByColumnName);
     }

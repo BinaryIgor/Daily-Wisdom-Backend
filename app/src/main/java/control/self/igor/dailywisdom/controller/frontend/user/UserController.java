@@ -3,7 +3,6 @@ package control.self.igor.dailywisdom.controller.frontend.user;
 import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +16,8 @@ import control.self.igor.dailywisdom.model.Token;
 import control.self.igor.dailywisdom.service.user.TokenService;
 import control.self.igor.dailywisdom.service.user.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/user")
@@ -25,10 +26,16 @@ public class UserController {
     private UserService userService;
     private TokenService tokenService;
 
-    @Autowired
     public UserController(UserService userService, TokenService tokenService) {
 	this.userService = userService;
 	this.tokenService = tokenService;
+    }
+
+    @ApiOperation("Login")
+    @PostMapping("/login")
+    public void fakeLogin(@ApiParam(name = "User", value = "To login as guest: Guest, Guest") @RequestBody User user) {
+	throw new IllegalStateException(
+		"This method shouldn't be called. It's implemented by Spring Security filters.");
     }
 
     @PostMapping("/sign-up")

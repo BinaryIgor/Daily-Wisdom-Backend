@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "user")
 public class User implements Identifiable {
@@ -20,6 +22,7 @@ public class User implements Identifiable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @JsonIgnore
     private long id;
 
     @NotNull(message = "User name must have at least 3 characters")
@@ -35,6 +38,7 @@ public class User implements Identifiable {
     @OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
 	    CascadeType.REFRESH })
     @JoinColumn(name = "user_role_id")
+    @JsonIgnore
     private UserRole userRole;
 
     public User() {

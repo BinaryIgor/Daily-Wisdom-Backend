@@ -1,6 +1,5 @@
 package control.self.igor.dailywisdom.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,7 +23,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private TokenService tokenService;
     private StreamService streamService;
 
-    @Autowired
     public SecurityConfiguration(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder,
 	    JsonService jsonService, TokenService tokenService, StreamService streamService) {
 	this.userService = userService;
@@ -41,7 +39,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		.addFilter(new JwtAuthenticationFilter(authenticationManager(), userService, jsonService, tokenService,
 			streamService))
 		.addFilter(new JwtAuthorizationFilter(authenticationManager(), streamService)).sessionManagement()
-		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().exceptionHandling()
+		.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
     }
 
     @Override

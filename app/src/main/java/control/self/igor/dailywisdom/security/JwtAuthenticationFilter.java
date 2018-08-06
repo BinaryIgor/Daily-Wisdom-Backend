@@ -7,7 +7,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,7 +30,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private TokenService tokenService;
     private StreamService streamService;
 
-    @Autowired
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserService userService,
 	    JsonService jsonService, TokenService tokenService, StreamService streamService) {
 	this.authenticationManager = authenticationManager;

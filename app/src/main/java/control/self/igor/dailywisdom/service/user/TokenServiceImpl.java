@@ -2,7 +2,6 @@ package control.self.igor.dailywisdom.service.user;
 
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,6 @@ public class TokenServiceImpl implements TokenService {
 
     private UserService userService;
 
-    @Autowired
     public TokenServiceImpl(UserService userService) {
 	this.userService = userService;
     }

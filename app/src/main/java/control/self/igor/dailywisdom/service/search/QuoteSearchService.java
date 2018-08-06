@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import control.self.igor.dailywisdom.entity.Quote;
@@ -17,7 +16,6 @@ import control.self.igor.dailywisdom.specification.SpecificationFactory;
 public class QuoteSearchService extends AbstractSearchService<Quote>
 	implements SearchService<Quote, QuoteSearchCriteria> {
 
-    @Autowired
     public QuoteSearchService(QuoteRepository repository) {
 	super(repository, "id");
     }

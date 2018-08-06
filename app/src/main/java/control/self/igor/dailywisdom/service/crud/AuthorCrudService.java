@@ -4,7 +4,6 @@ import java.util.NoSuchElementException;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import control.self.igor.dailywisdom.entity.Author;
@@ -18,7 +17,6 @@ public class AuthorCrudService extends AbstractAuthorCrudService {
 
     private AuthorDescriptionRepository authorDescriptionRepository;
 
-    @Autowired
     public AuthorCrudService(AuthorRepository authorRepository,
 	    AuthorDescriptionRepository authorDescriptionRepository) {
 	super(authorRepository);

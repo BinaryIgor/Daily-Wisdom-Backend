@@ -6,7 +6,6 @@ import java.util.NoSuchElementException;
 import javax.persistence.EntityExistsException;
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,7 +22,6 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
 	this.userRepository = userRepository;
 	this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -37,7 +35,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User authenticate(User user) {
 	User foundUser = userRepository.findByName(user.getName());
-	System.out.println("Found user = " + foundUser);
 	String encodedPassword = bCryptPasswordEncoder.encode(foundUser.getPassword());
 	if (foundUser == null || !foundUser.getPassword().equals(encodedPassword)) {
 	    throw new NoSuchElementException();
